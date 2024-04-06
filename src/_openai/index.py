@@ -6,10 +6,10 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 import tiktoken
 from typing import List
-from doc_model import Page
+from .doc_model import Page
 
 
-class OpenAIPineconeIndexer:
+class OpenaiPineconeIndexer:
     """
     Class for indexing documents to Pinecone using OpenAI embeddings.
     """
@@ -120,7 +120,7 @@ class OpenAIPineconeIndexer:
             if len(texts) >= batch_limit:
                 ids = [str(uuid4()) for _ in range(len(texts))]
                 embeds = embed.embed_documents(texts)  
-                self.index.upsert(vectors=zip(ids, embeds, metadatas))
+                self.index.upsert(vectors=zip(ids, embeds, metadatas), async_req=True)
                 texts = []
                 metadatas = []
 
@@ -150,7 +150,7 @@ class OpenAIPineconeIndexer:
                 for page in pages
             ]
 
-            print(f"Upserting {len(pages_data)} documents to the Pinecone index...")
+            print(f"Upserting {len(pages_data)} pages to the Pinecone index...")
             self.upsert_documents(pages_data, batch_limit)  
             print("Finished upserting documents for this URL.")
         print("Indexing complete.")
