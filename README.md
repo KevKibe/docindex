@@ -4,19 +4,19 @@
   <a href="https://github.com/KevKibe/docindex/commits/">
     <img src="https://img.shields.io/github/last-commit/KevKibe/docindex?" alt="Last commit">
   </a>
-  <a href="https://github.com/KevKibe/African-Whisper/blob/main/LICENSE">
+  <a href="https://github.com/KevKibe/docindex/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/KevKibe/docindex?" alt="License">
   </a>
 
-*Fast storage of multiple offline or online documents and their metadata in a Pinecone Index for RAG* 
+*Efficiently store multiple documents and their metadata, whether they're offline or online, in a Pinecone Vector Database optimized for Retrieval Augmented Generation (RAG) models Fast* 
 
 ## Features
 
-- ⚡️ Index multiple documents and their metadata to Pinecone fast.<br>
-- 📚 Index any document whether on your local computer or online.<br>
-- 📂 Support for various document formats including PDF, docx(in-development), etc.<br>
-- 🔁 Support for various embeddings services eg OpenAIEmbeddings, GoogleGenerativeAIEmbeddings(in-development), etc.<br>
-- 🛠️ Configure a vectorstore from the index for RAG pipelines.
+- ⚡️ **Rapid Indexing**: Quickly index multiple documents along with their metadata, including source, page details, and content, into Pinecone DB.<br>
+- 📚 **Document Flexibility**: Index documents from your local storage or online sources with ease.<br>
+- 📂 **Format Support**: Seamlessly handle various document formats, including PDF, docx(in-development), etc.<br>
+- 🔁 **Embedding Services Integration**: Enjoy support for multiple embedding services such as OpenAIEmbeddings, GoogleGenerativeAIEmbeddings and more in development.<br>
+- 🛠️ **Configurable Vectorstore**: Configure a vectorstore directly from the index to facilitate RAG pipelines effortlessly.
 
 ## Setup
 
