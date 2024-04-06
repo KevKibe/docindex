@@ -26,7 +26,7 @@ pip install docindex
 
 ## Usage
 ```python
-from _openai.docindex import OpenaiPineconeIndexer
+from _openai.index import OpenaiPineconeIndexer
 
 # Replace these values with your actual Pinecone API key, index name, OpenAI API key, and environment
 pinecone_api_key = "pinecone-api-key"
