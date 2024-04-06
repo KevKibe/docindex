@@ -4,7 +4,7 @@
   <a href="https://github.com/KevKibe/docindex/commits/">
     <img src="https://img.shields.io/github/last-commit/KevKibe/docindex?" alt="Last commit">
   </a>
-  <a href="https://github.com/KevKibe/African-Whisper/blob/main/LICENSE">
+  <a href="https://github.com/KevKibe/docindex/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/KevKibe/docindex?" alt="License">
   </a>
 
@@ -37,7 +37,7 @@ environment = "pinecone-index-environment"
 # Define the batch limit for indexing, how many pages per pass.
 batch_limit = 20
 
-# List of URLs of the documents to be indexed
+# List of URLs of the documents to be indexed. (offline on your computer or an online)
 urls = [
  "your-document-1.pdf",
  "your-document-2.pdf"
