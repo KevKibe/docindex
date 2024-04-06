@@ -1,2 +1,3 @@
-OpenAIPineconeIndex/__pycache__
+src/_openai/__pycache__
 venv
+src/_openai/main.py

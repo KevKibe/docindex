@@ -90,7 +90,7 @@ class OpenaiPineconeIndexer:
             separators=["\n\n", "\n", " ", ""]
         )
     
-    def upsert_documents(self, documents, batch_limit) -> None:
+    def upsert_documents(self, documents: List[Page], batch_limit: int) -> None:
         """
         Upsert documents into the Pinecone index.
 
