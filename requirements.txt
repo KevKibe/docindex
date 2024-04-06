@@ -1,0 +1,8 @@
+pinecone-client
+tiktoken==0.6.0
+pypdf==4.1.0
+unstructured==0.12.6
+langchain-community
+langchain
+faiss-cpu
+langchain-openai
