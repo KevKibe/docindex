@@ -37,7 +37,7 @@ environment = "pinecone-index-environment"
 # Define the batch limit for indexing, how many pages per pass.
 batch_limit = 20
 
-# List of URLs of the documents to be indexed
+# List of URLs of the documents to be indexed. (offline on your computer or an online)
 urls = [
  "your-document-1.pdf",
  "your-document-2.pdf"
