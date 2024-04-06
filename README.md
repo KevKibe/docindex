@@ -1,4 +1,4 @@
-<h1 align="center">DocIndex: Fast Document Indexing for RAG</h1>
+<h1 align="center">DocIndex: Fast Document Storage for RAG</h1>
 <p align="center">
 
   <a href="https://github.com/KevKibe/docindex/commits/">
@@ -8,7 +8,7 @@
     <img src="https://img.shields.io/github/license/KevKibe/docindex?" alt="License">
   </a>
 
-*Fast indexing of multiple offline or online documents and their metadata to Pinecone for RAG* 
+*Fast storage of multiple offline or online documents and their metadata in a Pinecone Index for RAG* 
 
 ## Features
 
