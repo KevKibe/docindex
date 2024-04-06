@@ -12,11 +12,11 @@
 
 ## Features
 
-⚡️ Index multiple documents and their metadata to Pinecone fast.<br>
-📚 Index any document whether on your local computer or online.<br>
-📂 Support for various document formats including PDF, docx(in-development), etc.<br>
-🔁 Support for various embeddings services eg OpenAIEmbeddings, GoogleGenerativeAIEmbeddings(in-development), etc.<br>
-🛠️ Configure a vectorstore from the index for RAG pipelines.
+- ⚡️ Index multiple documents and their metadata to Pinecone fast.<br>
+- 📚 Index any document whether on your local computer or online.<br>
+- 📂 Support for various document formats including PDF, docx(in-development), etc.<br>
+- 🔁 Support for various embeddings services eg OpenAIEmbeddings, GoogleGenerativeAIEmbeddings(in-development), etc.<br>
+- 🛠️ Configure a vectorstore from the index for RAG pipelines.
 
 ## Setup
 
