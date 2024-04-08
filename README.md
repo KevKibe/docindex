@@ -28,6 +28,7 @@ pip install docindex
 ```
 
 ## Getting Started
+- Sign up to [Pinecone](https://www.pinecone.io/) and get an API key.
 ## Using OpenAI 
 ```python
 from _openai.docindex import OpenaiPineconeIndexer
@@ -75,11 +76,8 @@ embed = OpenAIEmbeddings(
         openai_api_key = openai_api_key
         )
 
-# Define the text field
-text_field = "text"
-
 # Initialize the Vectorstore with the Pinecone index and OpenAI embeddings
-vectorstore = VectorStorePinecone(index, embed, text_field)
+vectorstore = VectorStorePinecone(index, embed, "text")
 ```
 
 
@@ -132,11 +130,8 @@ embed = GoogleGenerativeAIEmbeddings(
         google_api_key=google_api_key
         )
 
-# Define the text field
-text_field = "text"
-
 # Initialize the Vectorstore with the Pinecone index and OpenAI embeddings
-vectorstore = VectorStorePinecone(index, embed, text_field)
+vectorstore = VectorStorePinecone(index, embed, "text")
 ```
 
 
