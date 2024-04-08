@@ -8,7 +8,6 @@
     <img src="https://img.shields.io/github/license/KevKibe/docindex?" alt="License">
   </a>
 <br>
-<img src="diagram.png" width="800" height="200">
 
 ![Diagram](image.png)
 
