@@ -34,13 +34,13 @@ class OpenaiPineconeIndexer:
         self.openai_api_key = openai_api_key
         self.tokenizer = tiktoken.get_encoding('p50k_base')
 
-    def create_index(self):
+    def create_index(self, environment: str = "us-west1-gcp" ):
         self.pc.create_index(
             name=self.index_name,
             dimension=1536,
             metric="cosine",
             spec=PodSpec(
-                environment="us-west-1-gcp",
+                environment=environment,
                 pod_type="p1.x1",
                 pods=1
             )
