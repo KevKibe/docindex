@@ -30,13 +30,13 @@ class OpenaiPineconeIndexer:
             openai_api_key (str): OpenAI API key.
         """
         self.pc = Pinecone(api_key=pinecone_api_key)
-        self.index = self.pc.Index(index_name)
+        self.index_name = index_name
         self.openai_api_key = openai_api_key
         self.tokenizer = tiktoken.get_encoding('p50k_base')
 
     def create_index(self):
         self.pc.create_index(
-            name=self.index,
+            name=self.index_name,
             dimension=1536,
             metric="cosine",
             spec=PodSpec(
@@ -45,12 +45,12 @@ class OpenaiPineconeIndexer:
                 pods=1
             )
             )
-        return print(f"Index {self.index} created successfully!")
+        return print(f"Index {self.index_name} created successfully!")
     
 
     def delete_index(self):
-        self.pc.delete_index(self.index)
-        return print(f"Index {self.index} deleted successfully!")
+        self.pc.delete_index(self.index_name)
+        return print(f"Index {self.index_name} deleted successfully!")
 
     
     def load_pdf(self, pdf_url) -> List:
@@ -130,8 +130,9 @@ class OpenaiPineconeIndexer:
             metadatas.extend(record_metadatas)
             if len(texts) >= batch_limit:
                 ids = [str(uuid4()) for _ in range(len(texts))]
-                embeds = embed.embed_documents(texts)  
-                self.index.upsert(vectors=zip(ids, embeds, metadatas), async_req=True)
+                embeds = embed.embed_documents(texts)
+                index = self.pc.Index(self.index_name)  
+                index.upsert(vectors=zip(ids, embeds, metadatas), async_req=True)
                 texts = []
                 metadatas = []
 
@@ -166,5 +167,5 @@ class OpenaiPineconeIndexer:
             self.upsert_documents(pages_data, batch_limit, chunk_size)  
             print("Finished upserting documents for this URL.")
         print("Indexing complete.")
-        index = self.pc.Index(self.index)
+        index = self.pc.Index(self.index_name)
         index.describe_index_stats()
