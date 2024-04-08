@@ -27,7 +27,7 @@ pip install docindex
 ## Getting Started
 ## Using OpenAI 
 ```python
-from _openai.index import OpenaiPineconeIndexer
+from _openai.docindex import OpenaiPineconeIndexer
 
 # Replace these values with your actual Pinecone API key, index name, OpenAI API key, and environment
 pinecone_api_key = "pinecone-api-key"
@@ -77,7 +77,7 @@ vectorstore = VectorStorePinecone(index, embed.embed_query, text_field)
 ## Using Google Generative AI  
 
 ```python
-from _google.index import GooglePineconeIndexer
+from _google.docindex import GooglePineconeIndexer
 
 # Replace these values with your actual Pinecone API key, index name, OpenAI API key, and environment
 pinecone_api_key = "pinecone-api-key"
