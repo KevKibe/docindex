@@ -7,6 +7,7 @@ from langchain_openai import OpenAIEmbeddings
 import tiktoken
 from typing import List
 from .doc_model import Page
+from langchain.document_loaders import Docx2txtLoader
 
 
 class OpenaiPineconeIndexer:
@@ -17,7 +18,6 @@ class OpenaiPineconeIndexer:
         self,
         index_name: str,
         pinecone_api_key: str,
-        environment: str,
         openai_api_key: str
     ) -> None:
         """
@@ -29,7 +29,7 @@ class OpenaiPineconeIndexer:
             environment (str): Environment for Pinecone service.
             openai_api_key (str): OpenAI API key.
         """
-        self.pc = Pinecone(api_key=pinecone_api_key, environment=environment)
+        self.pc = Pinecone(api_key=pinecone_api_key)
         self.index = self.pc.Index(index_name)
         self.openai_api_key = openai_api_key
         self.tokenizer = tiktoken.get_encoding('p50k_base')
