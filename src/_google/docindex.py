@@ -1,4 +1,4 @@
-from pinecone import Pinecone
+from pinecone import Pinecone, PodSpec
 from tqdm.auto import tqdm
 from uuid import uuid4
 from langchain_community.document_loaders import PyPDFLoader
@@ -7,7 +7,6 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import tiktoken
 from typing import List
 from _openai.doc_model import Page
-
 
 class GooglePineconeIndexer:
     """
@@ -29,11 +28,44 @@ class GooglePineconeIndexer:
             google_api_key (str): Google API key.
         """
         self.pc = Pinecone(api_key=pinecone_api_key)
-        self.index = self.pc.Index(index_name)
+        self.index_name = index_name
         self.google_api_key = google_api_key
         self.tokenizer = tiktoken.get_encoding('p50k_base')
 
+    def create_index(self, environment: str = "us-west1-gcp" ):
+        """
+        Creates an index with the specified parameters.
 
+        Args:
+            environment (str, optional): The environment where the index will be created. Defaults to "us-west1-gcp".
+
+        Returns:
+            None
+        """
+        print(f"Creating index {self.index_name}")
+        self.pc.create_index(
+            name=self.index_name,
+            dimension=1536,
+            metric="cosine",
+            spec=PodSpec(
+                environment=environment,
+                pod_type="p1.x1",
+                pods=1
+            )
+            )
+        return print(f"Index {self.index_name} created successfully!")
+    
+    def delete_index(self):
+        """
+        Deletes the created index.
+
+        Returns:
+            None
+        """
+        print(f"Deleting index {self.index_name}")
+        self.pc.delete_index(self.index_name)
+        return print(f"Index {self.index_name} deleted successfully!")
+    
     def load_pdf(self, pdf_url) -> List:
         """
         Load and split a PDF document into pages.
@@ -113,7 +145,8 @@ class GooglePineconeIndexer:
             if len(texts) >= batch_limit:
                 ids = [str(uuid4()) for _ in range(len(texts))]
                 embeds = embed.embed_documents(texts)  
-                self.index.upsert(vectors=zip(ids, embeds, metadatas), async_req=True)
+                index = self.pc.Index(self.index_name)  
+                index.upsert(vectors=zip(ids, embeds, metadatas), async_req=True)
                 texts = []
                 metadatas = []
 
@@ -147,4 +180,6 @@ class GooglePineconeIndexer:
             print(f"Upserting {len(pages_data)} pages to the Pinecone index...")
             self.upsert_documents(pages_data, batch_limit, chunk_size)  
             print("Finished upserting documents for this URL.")
+        index = self.pc.Index(self.index_name)
+        index.describe_index_stats()
         print("Indexing complete.")

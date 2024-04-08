@@ -7,8 +7,6 @@ from langchain_openai import OpenAIEmbeddings
 import tiktoken
 from typing import List
 from .doc_model import Page
-from langchain.document_loaders import Docx2txtLoader
-
 
 class OpenaiPineconeIndexer:
     """
@@ -35,6 +33,16 @@ class OpenaiPineconeIndexer:
         self.tokenizer = tiktoken.get_encoding('p50k_base')
 
     def create_index(self, environment: str = "us-west1-gcp" ):
+        """
+        Creates an index with the specified parameters.
+
+        Args:
+            environment (str, optional): The environment where the index will be created. Defaults to "us-west1-gcp".
+
+        Returns:
+            None
+        """
+        print(f"Creating index {self.index_name}")
         self.pc.create_index(
             name=self.index_name,
             dimension=1536,
@@ -49,6 +57,13 @@ class OpenaiPineconeIndexer:
     
 
     def delete_index(self):
+        """
+        Deletes the created index.
+
+        Returns:
+            None
+        """
+        print(f"Deleting index {self.index_name}")
         self.pc.delete_index(self.index_name)
         return print(f"Index {self.index_name} deleted successfully!")
 
@@ -66,6 +81,7 @@ class OpenaiPineconeIndexer:
         loader = PyPDFLoader(pdf_url)
         pages = loader.load_and_split()
         return pages
+    
     
     def tiktoken_len(self, text: str) -> int:
         """
