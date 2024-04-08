@@ -17,7 +17,6 @@ class GooglePineconeIndexer:
         self,
         index_name: str,
         pinecone_api_key: str,
-        environment: str,
         google_api_key: str
     ) -> None:
         """
@@ -29,7 +28,7 @@ class GooglePineconeIndexer:
             environment (str): Environment for Pinecone service.
             google_api_key (str): Google API key.
         """
-        self.pc = Pinecone(api_key=pinecone_api_key, environment=environment)
+        self.pc = Pinecone(api_key=pinecone_api_key)
         self.index = self.pc.Index(index_name)
         self.google_api_key = google_api_key
         self.tokenizer = tiktoken.get_encoding('p50k_base')
