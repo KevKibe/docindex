@@ -9,13 +9,14 @@ def parse_args():
     parser.add_argument("--environment", type=str, help="Environment for Pinecone service")
     parser.add_argument("--batch_limit", type=int,  help="Maximum batch size for indexing")
     parser.add_argument("--docs", nargs="+", help="URLs of the documents to be indexed")
+    parser.add_argument("--chunk_size", help="size of texts per chunk")
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
     pinecone_indexer = OpenaiPineconeIndexer(args.index_name, args.pinecone_api_key, args.environment, args.openai_api_key)
-    pinecone_indexer.index_documents(args.docs, args.batch_limit)
+    pinecone_indexer.index_documents(args.docs, args.batch_limit, args.chunk_size)
 
 
     
