@@ -76,34 +76,27 @@ class OpenaiPineconeIndexer:
             openai_api_key=self.openai_api_key
         )
 
-    def text_splitter(self) -> RecursiveCharacterTextSplitter:
-        """
-        Initialize RecursiveCharacterTextSplitter object.
-
-        Returns:
-            RecursiveCharacterTextSplitter: RecursiveCharacterTextSplitter object.
-        """
-        return RecursiveCharacterTextSplitter(
-            chunk_size=400,
-            chunk_overlap=20,
-            length_function=self.tiktoken_len,
-            separators=["\n\n", "\n", " ", ""]
-        )
     
-    def upsert_documents(self, documents: List[Page], batch_limit: int) -> None:
+    def upsert_documents(self, documents: List[Page], batch_limit: int, chunk_size: int = 256) -> None:
         """
         Upsert documents into the Pinecone index.
 
         Args:
             documents (List[Page]): List of documents to upsert.
             batch_limit (int): Maximum batch size for upsert operation.
+            chunks_size(int): size of texts per chunk.
 
         Returns:
             None
         """
         texts = []
         metadatas = []
-        text_splitter = self.text_splitter()  
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=int(chunk_size),
+            chunk_overlap=20,
+            length_function=self.tiktoken_len,
+            separators=["\n\n", "\n", " ", ""]
+        )
         embed = self.embed()  
         for i, record in enumerate(tqdm(documents)):
             metadata = {
@@ -125,13 +118,14 @@ class OpenaiPineconeIndexer:
                 metadatas = []
 
 
-    def index_documents(self, urls: List[str], batch_limit: int) -> None:
+    def index_documents(self, urls: List[str], batch_limit: int, chunk_size: int = 256) -> None:
         """
         Process a list of URLs and upsert documents to a Pinecone index.
 
         Args:
             urls (List[str]): List of URLs to process.
             batch_limit (int): Batch limit for upserting documents.
+            chunks_size(int): size of texts per chunk.
 
         Returns:
             None
@@ -151,6 +145,6 @@ class OpenaiPineconeIndexer:
             ]
 
             print(f"Upserting {len(pages_data)} pages to the Pinecone index...")
-            self.upsert_documents(pages_data, batch_limit)  
+            self.upsert_documents(pages_data, batch_limit, chunk_size)  
             print("Finished upserting documents for this URL.")
         print("Indexing complete.")
