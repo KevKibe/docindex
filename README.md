@@ -70,7 +70,7 @@ embed = OpenAIEmbeddings(
 text_field = "text"
 
 # Initialize the Vectorstore with the Pinecone index and OpenAI embeddings
-vectorstore = VectorStorePinecone(index, embed.embed_query, text_field)
+vectorstore = VectorStorePinecone(index, embed, text_field)
 ```
 
 
@@ -122,7 +122,7 @@ embed = GoogleGenerativeAIEmbeddings(
 text_field = "text"
 
 # Initialize the Vectorstore with the Pinecone index and OpenAI embeddings
-vectorstore = VectorStorePinecone(index, embed.embed_query, text_field)
+vectorstore = VectorStorePinecone(index, embed, text_field)
 ```
 
 
