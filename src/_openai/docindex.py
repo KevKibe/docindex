@@ -1,4 +1,4 @@
-from pinecone import Pinecone
+from pinecone import Pinecone, PodSpec
 from tqdm.auto import tqdm
 from uuid import uuid4
 from langchain_community.document_loaders import PyPDFLoader
@@ -34,7 +34,25 @@ class OpenaiPineconeIndexer:
         self.openai_api_key = openai_api_key
         self.tokenizer = tiktoken.get_encoding('p50k_base')
 
+    def create_index(self):
+        self.pc.create_index(
+            name=self.index,
+            dimension=1536,
+            metric="cosine",
+            spec=PodSpec(
+                environment="us-west-1-gcp",
+                pod_type="p1.x1",
+                pods=1
+            )
+            )
+        return print(f"Index {self.index} created successfully!")
+    
 
+    def delete_index(self):
+        self.pc.delete_index(self.index)
+        return print(f"Index {self.index} deleted successfully!")
+
+    
     def load_pdf(self, pdf_url) -> List:
         """
         Load and split a PDF document into pages.
@@ -148,3 +166,5 @@ class OpenaiPineconeIndexer:
             self.upsert_documents(pages_data, batch_limit, chunk_size)  
             print("Finished upserting documents for this URL.")
         print("Indexing complete.")
+        index = self.pc.Index(self.index)
+        index.describe_index_stats()
