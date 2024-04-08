@@ -166,6 +166,7 @@ class OpenaiPineconeIndexer:
             print(f"Upserting {len(pages_data)} pages to the Pinecone index...")
             self.upsert_documents(pages_data, batch_limit, chunk_size)  
             print("Finished upserting documents for this URL.")
-        print("Indexing complete.")
         index = self.pc.Index(self.index_name)
         index.describe_index_stats()
+        print("Indexing complete.")
+        
