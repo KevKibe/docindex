@@ -10,6 +10,8 @@
 <br>
 <img src="diagram.png" width="800" height="200">
 
+![Diagram](image.png)
+
 *Efficiently store multiple document embeddings and their metadata, whether they're offline or online, in a persistent Pinecone Vector Database optimized for Retrieval Augmented Generation (RAG) models Fast* 
 
 ## Features
