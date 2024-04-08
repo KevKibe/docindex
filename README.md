@@ -29,11 +29,10 @@ pip install docindex
 ```python
 from _openai.docindex import OpenaiPineconeIndexer
 
-# Replace these values with your actual Pinecone API key, index name, OpenAI API key, and environment
+# Replace these values with your actual Pinecone API key, index name, OpenAI API key
 pinecone_api_key = "pinecone-api-key"
 index_name = "pinecone-index-name"
 openai_api_key = "openai-api-key"
-environment = "pinecone-index-environment"
 batch_limit = 20 # Batch limit for upserting documents
 chunk_size = 256 # Optional: size of texts per chunk. 
 
@@ -79,11 +78,10 @@ vectorstore = VectorStorePinecone(index, embed, text_field)
 ```python
 from _google.docindex import GooglePineconeIndexer
 
-# Replace these values with your actual Pinecone API key, index name, OpenAI API key, and environment
+# Replace these values with your actual Pinecone API key, index name, Google API key
 pinecone_api_key = "pinecone-api-key"
 index_name = "pinecone-index-name"
 google_api_key = "google-api-key"
-environment = "pinecone-index-environment"
 batch_limit = 20 # Batch limit for upserting documents
 chunk_size = 256 # Optional: size of texts per chunk. 
 
@@ -94,7 +92,7 @@ urls = [
 ]
 
 # Initialize the Pinecone indexer
-pinecone_index = GooglePineconeIndexer(index_name, pinecone_api_key, environment, google_api_key)
+pinecone_index = GooglePineconeIndexer(index_name, pinecone_api_key, google_api_key)
 
 # Index the documents with the specified URLs and batch limit
 pinecone_index.index_documents(urls,batch_limit,chunk_size)
