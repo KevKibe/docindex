@@ -1,4 +1,4 @@
-from pinecone import Pinecone
+from pinecone import Pinecone, PodSpec
 from tqdm.auto import tqdm
 from uuid import uuid4
 from langchain_community.document_loaders import PyPDFLoader
@@ -8,7 +8,6 @@ import tiktoken
 from typing import List
 from .doc_model import Page
 
-
 class OpenaiPineconeIndexer:
     """
     Class for indexing documents to Pinecone using OpenAI embeddings.
@@ -17,7 +16,6 @@ class OpenaiPineconeIndexer:
         self,
         index_name: str,
         pinecone_api_key: str,
-        environment: str,
         openai_api_key: str
     ) -> None:
         """
@@ -29,12 +27,47 @@ class OpenaiPineconeIndexer:
             environment (str): Environment for Pinecone service.
             openai_api_key (str): OpenAI API key.
         """
-        self.pc = Pinecone(api_key=pinecone_api_key, environment=environment)
-        self.index = self.pc.Index(index_name)
+        self.pc = Pinecone(api_key=pinecone_api_key)
+        self.index_name = index_name
         self.openai_api_key = openai_api_key
         self.tokenizer = tiktoken.get_encoding('p50k_base')
 
+    def create_index(self, environment: str = "us-west1-gcp" ):
+        """
+        Creates an index with the specified parameters.
 
+        Args:
+            environment (str, optional): The environment where the index will be created. Defaults to "us-west1-gcp".
+
+        Returns:
+            None
+        """
+        print(f"Creating index {self.index_name}")
+        self.pc.create_index(
+            name=self.index_name,
+            dimension=1536,
+            metric="cosine",
+            spec=PodSpec(
+                environment=environment,
+                pod_type="p1.x1",
+                pods=1
+            )
+            )
+        return print(f"Index {self.index_name} created successfully!")
+    
+
+    def delete_index(self):
+        """
+        Deletes the created index.
+
+        Returns:
+            None
+        """
+        print(f"Deleting index {self.index_name}")
+        self.pc.delete_index(self.index_name)
+        return print(f"Index {self.index_name} deleted successfully!")
+
+    
     def load_pdf(self, pdf_url) -> List:
         """
         Load and split a PDF document into pages.
@@ -48,6 +81,7 @@ class OpenaiPineconeIndexer:
         loader = PyPDFLoader(pdf_url)
         pages = loader.load_and_split()
         return pages
+    
     
     def tiktoken_len(self, text: str) -> int:
         """
@@ -112,8 +146,9 @@ class OpenaiPineconeIndexer:
             metadatas.extend(record_metadatas)
             if len(texts) >= batch_limit:
                 ids = [str(uuid4()) for _ in range(len(texts))]
-                embeds = embed.embed_documents(texts)  
-                self.index.upsert(vectors=zip(ids, embeds, metadatas), async_req=True)
+                embeds = embed.embed_documents(texts)
+                index = self.pc.Index(self.index_name)  
+                index.upsert(vectors=zip(ids, embeds, metadatas), async_req=True)
                 texts = []
                 metadatas = []
 
@@ -147,4 +182,7 @@ class OpenaiPineconeIndexer:
             print(f"Upserting {len(pages_data)} pages to the Pinecone index...")
             self.upsert_documents(pages_data, batch_limit, chunk_size)  
             print("Finished upserting documents for this URL.")
+        index = self.pc.Index(self.index_name)
+        index.describe_index_stats()
         print("Indexing complete.")
+        

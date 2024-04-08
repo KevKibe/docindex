@@ -1,4 +1,4 @@
-<h1 align="center">DocIndex: Fast Document Embeddings Storage for RAG</h1>
+<h1 align="center">DocIndex: Fast Persistent Document Embeddings Storage for RAG</h1>
 <p align="center">
 
   <a href="https://github.com/KevKibe/docindex/commits/">
@@ -7,8 +7,11 @@
   <a href="https://github.com/KevKibe/docindex/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/KevKibe/docindex?" alt="License">
   </a>
+<br>
 
-*Efficiently store multiple document embeddings and their metadata, whether they're offline or online, in a Pinecone Vector Database optimized for Retrieval Augmented Generation (RAG) models Fast* 
+![Diagram](image.png)
+
+*Efficiently store multiple document embeddings and their metadata, whether they're offline or online, in a persistent Pinecone Vector Database optimized for Retrieval Augmented Generation (RAG) models Fast* 
 
 ## Features
 
@@ -25,15 +28,15 @@ pip install docindex
 ```
 
 ## Getting Started
+- Sign up to [Pinecone](https://www.pinecone.io/) and get an API key.
 ## Using OpenAI 
 ```python
 from _openai.docindex import OpenaiPineconeIndexer
 
-# Replace these values with your actual Pinecone API key, index name, OpenAI API key, and environment
+# Replace these values with your actual Pinecone API key, index name, OpenAI API key
 pinecone_api_key = "pinecone-api-key"
 index_name = "pinecone-index-name"
 openai_api_key = "openai-api-key"
-environment = "pinecone-index-environment"
 batch_limit = 20 # Batch limit for upserting documents
 chunk_size = 256 # Optional: size of texts per chunk. 
 
@@ -44,10 +47,17 @@ urls = [
 ]
 
 # Initialize the Pinecone indexer
-pinecone_index = OpenaiPineconeIndexer(index_name, pinecone_api_key, environment, openai_api_key)
+pinecone_index = OpenaiPineconeIndexer(index_name, pinecone_api_key, openai_api_key)
 
-# Index the documents with the specified URLs and batch limit
+# To create a new Index
+pinecone_index.create_index()
+
+# Store the document embeddings with the specified URLs and batch limit
 pinecone_index.index_documents(urls,batch_limit,chunk_size)
+```
+```python
+# To delete the created Index
+pinecone_index.delete_index()
 ```
 ## Initialize Vectorstore(using OpenAI)
 
@@ -66,11 +76,8 @@ embed = OpenAIEmbeddings(
         openai_api_key = openai_api_key
         )
 
-# Define the text field
-text_field = "text"
-
 # Initialize the Vectorstore with the Pinecone index and OpenAI embeddings
-vectorstore = VectorStorePinecone(index, embed, text_field)
+vectorstore = VectorStorePinecone(index, embed, "text")
 ```
 
 
@@ -79,11 +86,10 @@ vectorstore = VectorStorePinecone(index, embed, text_field)
 ```python
 from _google.docindex import GooglePineconeIndexer
 
-# Replace these values with your actual Pinecone API key, index name, OpenAI API key, and environment
+# Replace these values with your actual Pinecone API key, index name, Google API key
 pinecone_api_key = "pinecone-api-key"
 index_name = "pinecone-index-name"
 google_api_key = "google-api-key"
-environment = "pinecone-index-environment"
 batch_limit = 20 # Batch limit for upserting documents
 chunk_size = 256 # Optional: size of texts per chunk. 
 
@@ -93,11 +99,17 @@ urls = [
  "your-document-2.pdf"
 ]
 
-# Initialize the Pinecone indexer
-pinecone_index = GooglePineconeIndexer(index_name, pinecone_api_key, environment, google_api_key)
+pinecone_index = GooglePineconeIndexer(index_name, pinecone_api_key, google_api_key)
 
-# Index the documents with the specified URLs and batch limit
+# To create a new Index
+pinecone_index.create_index()
+
+# Store the document embeddings with the specified URLs and batch limit
 pinecone_index.index_documents(urls,batch_limit,chunk_size)
+```
+```python
+# To delete the created Index
+pinecone_index.delete_index()
 ```
 
 
@@ -118,11 +130,8 @@ embed = GoogleGenerativeAIEmbeddings(
         google_api_key=google_api_key
         )
 
-# Define the text field
-text_field = "text"
-
 # Initialize the Vectorstore with the Pinecone index and OpenAI embeddings
-vectorstore = VectorStorePinecone(index, embed, text_field)
+vectorstore = VectorStorePinecone(index, embed, "text")
 ```
 
 
@@ -155,16 +164,38 @@ pip install -r requirements.txt
 ```bash
 cd src
 ```
+- To create an index
+
+```bash
+# Using OpenAI 
+python -m  _openai.create_index --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" --openai_api_key "your_openai_api_key"
+```
+
+```bash
+# Using Google Generative AI
+python -m  _google.create_index --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" --google_api_key "your_google_api_key"
+```
 
 - Run the command to start indexing the documents
 
 ```bash
 # Using OpenAI 
-python -m _openai.doc_index  --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" --openai_api_key "your_openai_api_key" --environment "your_environment" --batch_limit 10 --docs  "doc-1.pdf" "doc-2.pdf' --chunk_size 256 
+python -m _openai.doc_index  --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" --openai_api_key "your_openai_api_key" --batch_limit 10 --docs  "doc-1.pdf" "doc-2.pdf' --chunk_size 256 
 ```
 ```bash
 # Using Google Generative AI 
-python -m _google.doc_index  --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" --google_api_key "your_google_api_key" --environment "your_environment" --batch_limit 10 --docs  "doc-1.pdf" "doc-2.pdf' --chunk_size 256 
+python -m _google.doc_index  --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" --google_api_key "your_google_api_key" --batch_limit 10 --docs  "doc-1.pdf" "doc-2.pdf' --chunk_size 256 
+```
+- To delete an index
+
+```bash
+# Using OpenAI 
+python -m  _openai.delete_index --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" --openai_api_key "your_openai_api_key"
+```
+
+```bash
+# Using Google Generative AI
+python -m  _google.delete_index --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" --google_api_key "your_google_api_key"
 ```
 
 ## Contributing 
