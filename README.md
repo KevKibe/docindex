@@ -98,6 +98,8 @@ urls = [
  "your-document-2.pdf"
 ]
 
+pinecone_index = GooglePineconeIndexer(index_name, pinecone_api_key, environment, openai_api_key)
+
 # To create a new Index
 pinecone_index.create_index()
 
