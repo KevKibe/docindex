@@ -131,9 +131,7 @@ cd src
 ```bash
 # Using OpenAI 
 python -m  _openai.create_index --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" --openai_api_key "your_openai_api_key"
-```
 
-```bash
 # Using Google Generative AI
 python -m  _google.create_index --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" --google_api_key "your_google_api_key"
 ```
@@ -153,9 +151,7 @@ python -m _google.doc_index  --pinecone_api_key "your_pinecone_api_key" --index_
 ```bash
 # Using OpenAI 
 python -m  _openai.delete_index --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" --openai_api_key "your_openai_api_key"
-```
 
-```bash
 # Using Google Generative AI
 python -m  _google.delete_index --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" --google_api_key "your_google_api_key"
 ```
