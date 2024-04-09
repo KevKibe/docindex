@@ -8,6 +8,7 @@ import tiktoken
 from typing import List
 from _openai.doc_model import Page
 from langchain_pinecone import PineconeVectorStore 
+import google.generativeai as genai
 
 class GooglePineconeIndexer:
     """
@@ -46,7 +47,7 @@ class GooglePineconeIndexer:
         print(f"Creating index {self.index_name}")
         self.pc.create_index(
             name=self.index_name,
-            dimension=1536,
+            dimension=768,
             metric="cosine",
             spec=PodSpec(
                 environment=environment,
@@ -97,19 +98,23 @@ class GooglePineconeIndexer:
         )
         return len(tokens)
     
-    def embed(self) -> GoogleGenerativeAIEmbeddings:
+    def embed(self, sample_text: str) -> GoogleGenerativeAIEmbeddings:
         """
-        Initialize GoogleGenerativeAIEmbeddings object.
+        Embeds the given sample text using Google's Generative AI.
+
+        Args:
+            sample_text (str): The text to be embedded.
 
         Returns:
-            GoogleGenerativeAIEmbeddings: GoogleGenerativeAIEmbeddings object.
+            GoogleGenerativeAIEmbeddings: An object containing the embedded content.
         """
-        return GoogleGenerativeAIEmbeddings(
-            model="models/embedding-001", 
-            google_api_key=self.google_api_key
-            )
+        genai.configure(api_key=self.google_api_key)
+        return genai.embed_content(
+            model='models/embedding-001',
+            content=sample_text,
+            task_type="retrieval_document"
+        )
 
-    
     def upsert_documents(self, documents: List[Page], batch_limit: int, chunk_size: int = 256) -> None:
         """
         Upsert documents into the Pinecone index.
@@ -130,7 +135,6 @@ class GooglePineconeIndexer:
             length_function=self.tiktoken_len,
             separators=["\n\n", "\n", " ", ""]
         )
-        embed = self.embed()  
         for i, record in enumerate(tqdm(documents)):
             metadata = {
                 'content': record.page_content,
@@ -145,7 +149,8 @@ class GooglePineconeIndexer:
             metadatas.extend(record_metadatas)
             if len(texts) >= batch_limit:
                 ids = [str(uuid4()) for _ in range(len(texts))]
-                embeds = embed.embed_documents(texts)  
+                embeds = self.embed(texts)
+                embeds = embeds['embedding']
                 index = self.pc.Index(self.index_name)  
                 index.upsert(vectors=zip(ids, embeds, metadatas), async_req=True)
                 texts = []
