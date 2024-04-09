@@ -35,10 +35,10 @@ from _openai.docindex import OpenaiPineconeIndexer
 
 # Replace these values with your actual Pinecone API key, index name, OpenAI API key
 pinecone_api_key = "pinecone-api-key"
-index_name = "pinecone-index-name"
+index_name = "index-name"               # e.g index-1
 openai_api_key = "openai-api-key"
-batch_limit = 20 # Batch limit for upserting documents
-chunk_size = 256 # Optional: size of texts per chunk. 
+batch_limit = 20                        # Batch limit for upserting documents
+chunk_size = 256                        # Optional: size of texts per chunk. 
 
 # List of URLs of the documents to be indexed. (offline on your computer or online)
 urls = [
@@ -71,10 +71,10 @@ from _google.docindex import GooglePineconeIndexer
 
 # Replace these values with your actual Pinecone API key, index name, Google API key
 pinecone_api_key = "pinecone-api-key"
-index_name = "pinecone-index-name"
+index_name = "index-name"                # e.g index-1
 google_api_key = "google-api-key"
-batch_limit = 20 # Batch limit for upserting documents
-chunk_size = 256 # Optional: size of texts per chunk. 
+batch_limit = 20                         # Batch limit for upserting documents
+chunk_size = 256                         # Optional: size of texts per chunk. 
 
 # List of URLs of the documents to be indexed. (offline on your computer or an online)
 urls = [
