@@ -7,6 +7,7 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import tiktoken
 from typing import List
 from _openai.doc_model import Page
+from langchain_pinecone import PineconeVectorStore 
 
 class GooglePineconeIndexer:
     """
@@ -181,5 +182,14 @@ class GooglePineconeIndexer:
             self.upsert_documents(pages_data, batch_limit, chunk_size)  
             print("Finished upserting documents for this URL.")
         index = self.pc.Index(self.index_name)
-        index.describe_index_stats()
+        print(index.describe_index_stats())
         print("Indexing complete.")
+
+    def initialize_vectorstore(self, index_name):
+        index = self.pc.Index(index_name)
+        embed = GoogleGenerativeAIEmbeddings(
+                model="models/embedding-001", 
+                google_api_key=self.google_api_key
+                )
+        vectorstore = PineconeVectorStore(index, embed, "text")
+        return vectorstore
