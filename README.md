@@ -47,37 +47,20 @@ urls = [
 ]
 
 # Initialize the Pinecone indexer
-pinecone_index = OpenaiPineconeIndexer(index_name, pinecone_api_key, openai_api_key)
+pinecone_indexer = OpenaiPineconeIndexer(index_name, pinecone_api_key, openai_api_key)
 
 # To create a new Index
-pinecone_index.create_index()
+pinecone_indexer.create_index()
 
 # Store the document embeddings with the specified URLs and batch limit
-pinecone_index.index_documents(urls,batch_limit,chunk_size)
+pinecone_indexer.index_documents(urls,batch_limit,chunk_size)
+
+# Initialize the Vectorstore
+vectorstore = pinecone_indexer.initialize_vectorstore(index_name)
 ```
 ```python
 # To delete the created Index
-pinecone_index.delete_index()
-```
-## Initialize Vectorstore(using OpenAI)
-
-```python
-from pinecone import Pinecone as IndexPinecone
-from langchain_community.vectorstores import Pinecone as VectorStorePinecone
-from langchain.embeddings.openai import OpenAIEmbeddings
-
-# Initialize the Pinecone index
-index_pc = IndexPinecone(api_key=pinecone_api_key)
-index = index_pc.Index(index_name)
-        
-# Initialize OpenAI embeddings if you're using OpenAI embeddings
-embed = OpenAIEmbeddings(
-        model = 'text-embedding-ada-002',
-        openai_api_key = openai_api_key
-        )
-
-# Initialize the Vectorstore with the Pinecone index and OpenAI embeddings
-vectorstore = VectorStorePinecone(index, embed, "text")
+pinecone_indexer.delete_index()
 ```
 
 
@@ -99,42 +82,21 @@ urls = [
  "your-document-2.pdf"
 ]
 
-pinecone_index = GooglePineconeIndexer(index_name, pinecone_api_key, google_api_key)
+pinecone_indexer = GooglePineconeIndexer(index_name, pinecone_api_key, google_api_key)
 
 # To create a new Index
-pinecone_index.create_index()
+pinecone_indexer.create_index()
 
 # Store the document embeddings with the specified URLs and batch limit
-pinecone_index.index_documents(urls,batch_limit,chunk_size)
+pinecone_indexer.index_documents(urls,batch_limit,chunk_size)
+
+# Initialize the Vectorstore
+vectorstore = pinecone_indexer.initialize_vectorstore(index_name)
 ```
 ```python
 # To delete the created Index
-pinecone_index.delete_index()
+pinecone_indexer.delete_index()
 ```
-
-
-## Initialize Vectorstore(using Google Generative AI)
-
-```python
-from pinecone import Pinecone as IndexPinecone
-from langchain_community.vectorstores import Pinecone as VectorStorePinecone
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-
-# Initialize the Pinecone index
-index_pc = IndexPinecone(api_key=pinecone_api_key)
-index = index_pc.Index(index_name)
-        
-# Initialize embeddings 
-embed = GoogleGenerativeAIEmbeddings(
-        model="models/embedding-001", 
-        google_api_key=google_api_key
-        )
-
-# Initialize the Vectorstore with the Pinecone index and OpenAI embeddings
-vectorstore = VectorStorePinecone(index, embed, "text")
-```
-
-
 
 
 ## Using the CLI
