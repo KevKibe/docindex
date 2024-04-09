@@ -11,8 +11,7 @@
 
 ![Diagram](image.png)
 
-*Efficiently store multiple document embeddings and their metadata, whether they're offline or online, in a persistent Pinecone Vector Database optimized for Retrieval Augmented Generation (RAG) applications fast* 
-
+ *Efficiently store multiple document embeddings and their metadata, whether they're offline or online, in a persistent Pinecone Vector Database optimized for Retrieval Augmented Generation (RAG) applications fast*
 ## Features
 
 - ⚡️ **Rapid Indexing**: Quickly index multiple documents along with their metadata, including source, page details, and content, into Pinecone DB.<br>
@@ -30,6 +29,7 @@ pip install docindex
 ## Getting Started
 - Sign up to [Pinecone](https://www.pinecone.io/) and get an API key.
 ## Using OpenAI 
+[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1f5DzVjM9n9XWFtErTdWkKUFtszXyqzMI#scrollTo=olWrGV2viIsP)
 ```python
 from _openai.docindex import OpenaiPineconeIndexer
 
