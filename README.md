@@ -65,7 +65,7 @@ pinecone_indexer.delete_index()
 
 
 ## Using Google Generative AI  
-
+[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1C4DyIsWMJWUmNuXEmmUMyshqoAKspFlp?usp=sharing)
 ```python
 from _google.docindex import GooglePineconeIndexer
 
@@ -157,8 +157,8 @@ python -m  _google.delete_index --pinecone_api_key "your_pinecone_api_key" --ind
 ```
 
 ## Contributing 
+🌟 First consider giving it a star at the top right. It means a lot!
 Contributions are welcome and encouraged.
-
 Before contributing, please take a moment to review our [Contribution Guidelines](https://github.com/KevKibe/docindex/blob/master/DOCS/CONTRIBUTING.md) for important information on how to contribute to this project.
 
 If you're unsure about anything or need assistance, don't hesitate to reach out to us or open an issue to discuss your ideas.
