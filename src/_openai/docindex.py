@@ -7,6 +7,7 @@ from langchain_openai import OpenAIEmbeddings
 import tiktoken
 from typing import List
 from .doc_model import Page
+from langchain_pinecone import PineconeVectorStore 
 
 class OpenaiPineconeIndexer:
     """
@@ -183,6 +184,14 @@ class OpenaiPineconeIndexer:
             self.upsert_documents(pages_data, batch_limit, chunk_size)  
             print("Finished upserting documents for this URL.")
         index = self.pc.Index(self.index_name)
-        index.describe_index_stats()
+        print(index.describe_index_stats())
         print("Indexing complete.")
         
+    def initialize_vectorstore(self, index_name):
+        index = self.pc.Index(index_name)
+        embed = OpenAIEmbeddings(
+                model = 'text-embedding-ada-002',
+                openai_api_key = self.openai_api_key
+                )
+        vectorstore = PineconeVectorStore(index, embed, "text")
+        return vectorstore
