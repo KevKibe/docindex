@@ -9,7 +9,7 @@
   </a>
 <br>
 
-![Diagram](image.png)
+![Diagram](diagram.png)
 
  *Efficiently store multiple document embeddings and their metadata, whether they're offline or online, in a persistent Pinecone Vector Database optimized for Retrieval Augmented Generation (RAG) applications fast*
 ## Features
