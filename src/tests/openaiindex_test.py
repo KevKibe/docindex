@@ -43,7 +43,7 @@ class TestOpenaiPineconeIndexer(unittest.TestCase):
         index = self.indexer.pc.Index(self.index_name)
         self.assertIsInstance(index, pinecone.data.index.Index)
         
-    def test_initialize_vectorstore(self):
+    def test_03_initialize_vectorstore(self):
         """
         Test initializing the vector store and assert its type.
         """
@@ -51,7 +51,7 @@ class TestOpenaiPineconeIndexer(unittest.TestCase):
         self.assertIsInstance(vectorstore, PineconeVectorStore)
 
     @patch('sys.stdout', new_callable=StringIO)
-    def test_03_delete_index(self, mock_stdout):
+    def test_04_delete_index(self, mock_stdout):
         """
         Test deleting an index and assert the output.
         """
@@ -64,7 +64,7 @@ class TestOpenaiPineconeIndexer(unittest.TestCase):
         self.assertEqual(index_deleted_message_1, f"Index {self.index_name} deleted successfully!")
     
     @classmethod
-    def sort_04_test_methods(cls, testCaseClass, testCaseNames):
+    def sort_test_methods(cls, testCaseClass, testCaseNames):
         """
         Sort test methods for better readability.
         """
