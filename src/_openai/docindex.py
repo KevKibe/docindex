@@ -186,6 +186,7 @@ class OpenaiPineconeIndexer:
         index = self.pc.Index(self.index_name)
         print(index.describe_index_stats())
         print("Indexing complete.")
+        return index
         
     def initialize_vectorstore(self, index_name):
         index = self.pc.Index(index_name)
