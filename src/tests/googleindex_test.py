@@ -21,7 +21,7 @@ class TestGooglePineconeIndexer(unittest.TestCase):
         self.indexer = GooglePineconeIndexer(self.index_name, self.pinecone_api_key, self.google_api_key)
 
     @patch('sys.stdout', new_callable=StringIO)
-    def test_create_index(self, mock_stdout):
+    def test_01_create_index(self, mock_stdout):
         """
         Test creating an index and assert the output.
         """
@@ -34,7 +34,7 @@ class TestGooglePineconeIndexer(unittest.TestCase):
         self.assertEqual(index_created_message_1, f"Index {self.index_name} created successfully!")
 
     @patch('builtins.print')
-    def test_index_documents(self, mock_print):
+    def test_02_index_documents(self, mock_print):
         """
         Test indexing documents and assert the type of the index.
         """
@@ -43,7 +43,7 @@ class TestGooglePineconeIndexer(unittest.TestCase):
         index = self.indexer.pc.Index(self.index_name)
         self.assertIsInstance(index, pinecone.data.index.Index)
         
-    def test_initialize_vectorstore(self):
+    def test_03_initialize_vectorstore(self):
         """
         Test initializing the vector store and assert its type.
         """
@@ -51,7 +51,7 @@ class TestGooglePineconeIndexer(unittest.TestCase):
         self.assertIsInstance(vectorstore, PineconeVectorStore)
 
     @patch('sys.stdout', new_callable=StringIO)
-    def test_delete_index(self, mock_stdout):
+    def test_04_delete_index(self, mock_stdout):
         """
         Test deleting an index and assert the output.
         """
