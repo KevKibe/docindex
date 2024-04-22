@@ -8,6 +8,10 @@ import tiktoken
 from typing import List
 from .doc_model import Page
 from langchain_pinecone import PineconeVectorStore 
+from pathlib import Path
+from langchain_community.document_loaders import UnstructuredWordDocumentLoader
+from langchain_community.document_loaders import UnstructuredMarkdownLoader
+from langchain_community.document_loaders import UnstructuredHTMLLoader
 
 class OpenaiPineconeIndexer:
     """
@@ -69,18 +73,49 @@ class OpenaiPineconeIndexer:
         return print(f"Index {self.index_name} deleted successfully!")
 
     
-    def load_pdf(self, pdf_url) -> List:
+    def load_document(self, file_url: str) -> List[str]:
         """
-        Load and split a PDF document into pages.
+        Load a document from a given file URL and split it into pages.
+
+        This method supports loading documents in various formats including PDF, DOCX, DOC, Markdown, and HTML.
+        It uses the appropriate loader for each file type to load the document and split it into pages.
 
         Args:
-            pdf_url (str): URL of the PDF document.
+            file_url (str): The URL of the file to be loaded.
 
         Returns:
-            List: List of pages from the PDF document.
+            List[str]: A list of strings, where each string represents a page from the loaded document.
+
+        Raises:
+            ValueError: If the file type is not supported or recognized.
         """
-        loader = PyPDFLoader(pdf_url)
-        pages = loader.load_and_split()
+        pages = []
+        file_path = Path(file_url)
+
+        # Determine file type and use the appropriate loader
+        file_extension = file_path.suffix
+
+        # Load and split PDF files
+        if file_extension == ".pdf":
+            loader = PyPDFLoader(file_url)
+            pages = loader.load_and_split()
+
+        # Load and split DOCX and DOC files
+        elif file_extension in ('.docx', '.doc'):
+            loader = UnstructuredWordDocumentLoader(file_url)
+            pages = loader.load_and_split()
+
+        # Load and split Markdown files
+        elif file_extension == '.md':
+            loader = UnstructuredMarkdownLoader(file_url)
+            pages = loader.load_and_split()
+
+        # Load and split HTML files
+        elif file_extension == '.html':
+            loader = UnstructuredHTMLLoader(file_url)
+            pages = loader.load_and_split()
+
+        # Return the list of pages
         return pages
     
     
@@ -168,14 +203,14 @@ class OpenaiPineconeIndexer:
         """
         for url in tqdm(urls, desc="Processing URLs"):
             print(f"Processing URL: {url}")
-            pages = self.load_pdf(url)
+            pages = self.load_document(url)
             print(f"Found {len(pages)} pages in the PDF.")
             pages_data = [
                 Page(
                     page_content=page.page_content,
                     metadata=page.metadata,
-                    page=page.metadata['page'],
-                    source=page.metadata['source']
+                    page=page.metadata.get("page", 0),
+                    source=page.metadata.get("source")
                 )
                 for page in pages
             ]
