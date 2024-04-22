@@ -5,7 +5,8 @@ from io import StringIO
 from unittest.mock import patch
 import pinecone
 from langchain_pinecone import PineconeVectorStore 
-
+from dotenv import load_dotenv
+load_dotenv()
 class TestGooglePineconeIndexer(unittest.TestCase):
     """
     Test case class for the GooglePineconeIndexer.
@@ -38,7 +39,12 @@ class TestGooglePineconeIndexer(unittest.TestCase):
         """
         Test indexing documents and assert the type of the index.
         """
-        urls = ["https://arxiv.org/pdf/1706.03762.pdf"]
+        urls = [
+            "https://arxiv.org/pdf/1706.03762.pdf",
+            "src/tests/DOCX_TestPage.docx", 
+            "src/tests/TEST.md",
+            "src/tests/test.html"
+            ]
         self.indexer.index_documents(urls, batch_limit=10, chunk_size=256)
         index = self.indexer.pc.Index(self.index_name)
         self.assertIsInstance(index, pinecone.data.index.Index)
