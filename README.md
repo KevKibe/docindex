@@ -43,7 +43,9 @@ chunk_size = 256                        # Optional: size of texts per chunk.
 # List of URLs of the documents to be indexed. (offline on your computer or online)
 urls = [
  "your-document-1.pdf",
- "your-document-2.pdf"
+ "your-document-2.md",
+ "your-document-3.html",
+ "your-document-4.docx",
 ]
 
 # Initialize the Pinecone indexer
