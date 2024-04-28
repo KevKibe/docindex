@@ -10,8 +10,8 @@ jobs:
       - uses: actions/setup-python@v5
       - run: pip install ruff
       - run: |
-              ruff check src/ .
-              ruff check --fix src/
+              ruff check DocIndex/ .
+              ruff check --fix DocIndex/
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
