@@ -11,7 +11,7 @@ import google.generativeai as genai
 from langchain_openai import OpenAIEmbeddings
 from tqdm.auto import tqdm
 from langchain_pinecone import PineconeVectorStore 
-from DocIndex.doc_model import Page
+from docindex.doc_model import Page
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from uuid import uuid4
 

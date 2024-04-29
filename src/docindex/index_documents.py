@@ -1,4 +1,4 @@
-from DocIndex.doc_indexing import PineconeIndexer
+from docindex.doc_indexing import PineconeIndexer
 import argparse
 
 def parse_args():
