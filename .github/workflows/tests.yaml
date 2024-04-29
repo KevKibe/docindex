@@ -27,5 +27,5 @@ jobs:
             OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
             COHERE_API_KEY : ${{ secrets.COHERE_API_KEY }}
         run: |
-          pytest
+          pytest tests/test_pineconeindex_cohere.py tests/test_pineconeindex_google.py tests/test_pineconeindex_openai.py
         
