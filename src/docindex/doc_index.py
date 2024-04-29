@@ -120,7 +120,7 @@ class PineconeIndexer:
         )
         return len(tokens)
     
-    def embed(self, sample_text: str):
+    def embed(self, sample_text: str = None):
         """
         Generates embeddings for the provided sample text using either Google's Generative AI or OpenAI.
 
@@ -136,20 +136,23 @@ class PineconeIndexer:
         # Google Generative AI
         if self.google_api_key:
             genai.configure(api_key=self.google_api_key)
-            return genai.embed_content(
+            embed = genai.embed_content(
                 model='models/embedding-001',
                 content=sample_text,
                 task_type="retrieval_document"
             )
+            return embed
 
         # OpenAI Embeddings
         elif self.openai_api_key:
-            return OpenAIEmbeddings(
+            embed = OpenAIEmbeddings(
                 openai_api_key=self.openai_api_key
             )
+            return embed
         elif self.cohere_api_key:
-            return CohereEmbeddings(model_name = "embed-english-light-v3.0",
+            embed = CohereEmbeddings(model_name = "embed-english-light-v3.0",
                                     cohere_api_key=self.cohere_api_key)
+            return embed
         else:
             raise ValueError("A valid API key for either Google, Cohere or OpenAI must be provided to generate embeddings.")
     
@@ -189,10 +192,15 @@ class PineconeIndexer:
                 ids = [str(uuid4()) for _ in range(len(texts))]
                 embeddings = None
                 if self.google_api_key:
-                    embeddings = self.embed(texts)['embedding']
+                    embeds = self.embed(texts) 
+                    embeddings =  embeds['embedding']
                 elif self.openai_api_key:
                     embed = self.embed()  
                     embeddings = embed.embed_documents(texts)
+                elif self.cohere_api_key:
+                    embed = self.embed()  
+                    embeddings = embed.embed_query(texts)
+
                 if embeddings is not None:
                     index = self.pc.Index(self.index_name)  
                     index.upsert(vectors=zip(ids, embeddings , metadatas), async_req=True)
