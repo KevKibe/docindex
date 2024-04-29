@@ -14,6 +14,7 @@ from langchain_pinecone import PineconeVectorStore
 from docindex.doc_model import Page
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from uuid import uuid4
+import os
 
 class PineconeIndexer:
     def __init__(
@@ -26,7 +27,7 @@ class PineconeIndexer:
         ):
         self.cohere_api_key = cohere_api_key
         self.google_api_key = google_api_key
-        self.openai_api_key = openai_api_key
+        os.environ["OPENAI_API_KEY"] = openai_api_key
         self.pc = Pinecone(api_key=pinecone_api_key)
         self.index_name = index_name
         self.tokenizer = tiktoken.get_encoding('p50k_base')
