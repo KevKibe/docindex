@@ -1,5 +1,5 @@
 import unittest
-from src.docindex.doc_index import PineconeIndexer
+from docindex.doc_index import PineconeIndexer
 import os 
 from io import StringIO
 from unittest.mock import patch
