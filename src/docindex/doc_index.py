@@ -149,10 +149,10 @@ class PineconeIndexer:
                 openai_api_key=self.openai_api_key
             )
             return embed
-        elif self.cohere_api_key:
-            embed = CohereEmbeddings(model_name = "embed-english-light-v3.0",
-                                    cohere_api_key=self.cohere_api_key)
-            return embed
+        # elif self.cohere_api_key:
+        #     embed = CohereEmbeddings(model_name = "embed-english-light-v3.0",
+        #                             cohere_api_key=self.cohere_api_key)
+        #     return embed
         else:
             raise ValueError("A valid API key for either Google, Cohere or OpenAI must be provided to generate embeddings.")
     
@@ -197,9 +197,9 @@ class PineconeIndexer:
                 elif self.openai_api_key:
                     embed = self.embed()  
                     embeddings = embed.embed_documents(texts)
-                elif self.cohere_api_key:
-                    embed = self.embed()  
-                    embeddings = embed.embed_query(texts)
+                # elif self.cohere_api_key:
+                #     embed = self.embed()  
+                #     embeddings = embed.embed_query(texts)
 
                 if embeddings is not None:
                     index = self.pc.Index(self.index_name)  
