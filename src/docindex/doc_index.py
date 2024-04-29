@@ -133,26 +133,29 @@ class PineconeIndexer:
         Raises:
             ValueError: If no valid API key is provided.
         """
-        # Google Generative AI
-        if self.google_api_key:
-            genai.configure(api_key=self.google_api_key)
-            return genai.embed_content(
-                model='models/embedding-001',
-                content=sample_text,
-                task_type="retrieval_document"
-            )
+        # # Google Generative AI
+        # if self.google_api_key:
+        #     genai.configure(api_key=self.google_api_key)
+        #     return genai.embed_content(
+        #         model='models/embedding-001',
+        #         content=sample_text,
+        #         task_type="retrieval_document"
+        #     )
 
-        # OpenAI Embeddings
-        elif self.openai_api_key:
-            return OpenAIEmbeddings(
-                openai_api_key=self.openai_api_key
-            )
-        # elif self.cohere_api_key:
-        #     embed = CohereEmbeddings(model_name = "embed-english-light-v3.0",
-        #                             cohere_api_key=self.cohere_api_key)
-        #     return embed
-        else:
-            raise ValueError("A valid API key for either Google, Cohere or OpenAI must be provided to generate embeddings.")
+        # # OpenAI Embeddings
+        # elif self.openai_api_key:
+        #     return OpenAIEmbeddings(
+        #         openai_api_key=self.openai_api_key
+        #     )
+        # # elif self.cohere_api_key:
+        # #     embed = CohereEmbeddings(model_name = "embed-english-light-v3.0",
+        # #                             cohere_api_key=self.cohere_api_key)
+        # #     return embed
+        # else:
+        #     raise ValueError("A valid API key for either Google, Cohere or OpenAI must be provided to generate embeddings.")
+        return OpenAIEmbeddings(
+            openai_api_key=self.openai_api_key
+        )
     
     def upsert_documents(self, documents: List[Page], batch_limit: int, chunk_size: int = 256) -> None:
         """
