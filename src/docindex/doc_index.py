@@ -18,16 +18,16 @@ import os
 
 class PineconeIndexer:
     def __init__(
-        self,
-        index_name: str,
-        pinecone_api_key: str = None,
-        cohere_api_key: str = None,
-        openai_api_key: str = None,
-        google_api_key: str = None
-        ):
+    self,
+    index_name: str,
+    pinecone_api_key: str = None,
+    cohere_api_key: str = None,
+    openai_api_key: str = None,
+    google_api_key: str = None
+    ):
         self.cohere_api_key = cohere_api_key
         self.google_api_key = google_api_key
-        os.environ["OPENAI_API_KEY"] = openai_api_key
+        self.openai_api_key = openai_api_key
         self.pc = Pinecone(api_key=pinecone_api_key)
         self.index_name = index_name
         self.tokenizer = tiktoken.get_encoding('p50k_base')
@@ -134,29 +134,29 @@ class PineconeIndexer:
         Raises:
             ValueError: If no valid API key is provided.
         """
-        # # Google Generative AI
-        # if self.google_api_key:
-        #     genai.configure(api_key=self.google_api_key)
-        #     return genai.embed_content(
-        #         model='models/embedding-001',
-        #         content=sample_text,
-        #         task_type="retrieval_document"
-        #     )
+        # Google Generative AI
+        if self.google_api_key:
+            genai.configure(api_key=self.google_api_key)
+            return genai.embed_content(
+                model='models/embedding-001',
+                content=sample_text,
+                task_type="retrieval_document"
+            )
 
-        # # OpenAI Embeddings
-        # elif self.openai_api_key:
-        #     return OpenAIEmbeddings(
-        #         openai_api_key=self.openai_api_key
-        #     )
+        # OpenAI Embeddings
+        elif self.openai_api_key:
+            return OpenAIEmbeddings(
+                openai_api_key=self.openai_api_key
+            )
         # # elif self.cohere_api_key:
         # #     embed = CohereEmbeddings(model_name = "embed-english-light-v3.0",
         # #                             cohere_api_key=self.cohere_api_key)
         # #     return embed
         # else:
-        #     raise ValueError("A valid API key for either Google, Cohere or OpenAI must be provided to generate embeddings.")
-        return OpenAIEmbeddings(
-            openai_api_key=self.openai_api_key
-        )
+        # #     raise ValueError("A valid API key for either Google, Cohere or OpenAI must be provided to generate embeddings.")
+        # return OpenAIEmbeddings(
+        #     openai_api_key=self.openai_api_key
+        # )
     
     def upsert_documents(self, documents: List[Page], batch_limit: int, chunk_size: int = 256) -> None:
         """
@@ -178,6 +178,7 @@ class PineconeIndexer:
             length_function=self.tiktoken_len,
             separators=["\n\n", "\n", " ", ""]
         )
+
         embed = self.embed()  
         for i, record in enumerate(tqdm(documents)):
             metadata = {
@@ -193,13 +194,17 @@ class PineconeIndexer:
             metadatas.extend(record_metadatas)
             if len(texts) >= batch_limit:
                 ids = [str(uuid4()) for _ in range(len(texts))]
-                embeds = embed.embed_documents(texts)
-                index = self.pc.Index(self.index_name)  
-                index.upsert(vectors=zip(ids, embeds, metadatas), async_req=True)
-                texts = []
-                metadatas = []
-            else:
-                print("No API key provided for embedding generation.")
+                embeddings = None
+                if self.openai_api_key:
+                    embeddings = self.embed.embed_documents(texts)
+                elif self.google_api_key:
+                    embeddings = self.embed(texts)['embedding']
+                if embeddings is not None:
+                    index = self.pc.Index(self.index_name)  
+                    index.upsert(vectors=zip(ids, embeddings, metadatas), async_req=True)
+                    texts = []
+                    metadatas = []
+
 
 
     def index_documents(self, urls: List[str], batch_limit: int, chunk_size: int = 256) -> None:
