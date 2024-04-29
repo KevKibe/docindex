@@ -143,12 +143,12 @@ class PineconeIndexer:
                 task_type="retrieval_document"
             )
 
-        # OpenAI Embeddings
-        elif self.openai_api_key:
-            return OpenAIEmbeddings(
-                openai_api_key=self.openai_api_key
-            )
-        # # elif self.cohere_api_key:
+        # # OpenAI Embeddings
+        # elif self.openai_api_key:
+        #     return OpenAIEmbeddings(
+        #         openai_api_key=self.openai_api_key
+        #     )
+        # # # elif self.cohere_api_key:
         # #     embed = CohereEmbeddings(model_name = "embed-english-light-v3.0",
         # #                             cohere_api_key=self.cohere_api_key)
         # #     return embed
