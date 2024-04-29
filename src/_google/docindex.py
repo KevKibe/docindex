@@ -13,6 +13,13 @@ from pathlib import Path
 from langchain_community.document_loaders import UnstructuredWordDocumentLoader
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
 from langchain_community.document_loaders import UnstructuredHTMLLoader
+from langchain_pinecone import PineconeVectorStore
+from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from operator import itemgetter
+from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
+
 
 class GooglePineconeIndexer:
     """
@@ -234,3 +241,23 @@ class GooglePineconeIndexer:
                 )
         vectorstore = PineconeVectorStore(index, embed, "text")
         return vectorstore
+
+
+    def retrieve_and_generate(self, prompt: str ,query: str, top_k: int , index_name: str):
+        """
+        Retrieve documents from the Pinecone index and generate a response.
+        """
+        llm = ChatGoogleGenerativeAI(model = self.model_name, google_api_key=self.google_api_key)
+        rag_prompt = PromptTemplate(template = prompt, input_variables = ["query", "context"])
+        vector_store = self.initialize_vectorstore(index_name)
+        retriever = vector_store.as_retriver(search_kwargs = {"k": top_k})
+        rag_chain = (
+            {"context": itemgetter("query")| retriever,
+             "query": itemgetter("query"),
+             }
+             | rag_prompt
+             | llm
+             | StrOutputParser()
+        )
+
+        return rag_chain.invoke({"query": query})
