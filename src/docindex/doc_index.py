@@ -191,14 +191,16 @@ class PineconeIndexer:
                 if self.google_api_key:
                     embeddings = self.embed(texts)['embedding']
                 elif self.openai_api_key:
-                    embeddings = self.embed.embed_documents(texts)
+                    embed = self.embed()  
+                    embeddings = embed.embed_documents(texts)
                 if embeddings is not None:
                     index = self.pc.Index(self.index_name)  
                     index.upsert(vectors=zip(ids, embeddings , metadatas), async_req=True)
+                    texts = []
+                    metadatas = []
                 else:
                     print("No API key provided for embedding generation.")
-                texts = []
-                metadatas = []
+
 
     def index_documents(self, urls: List[str], batch_limit: int, chunk_size: int = 256) -> None:
         """
