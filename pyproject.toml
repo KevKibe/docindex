@@ -1,3 +1,36 @@
+[tool.poetry]
+name = "docindex"
+version = "0.5.0"
+description = "A package for fast persistent storage of multiple document embeddings and their metadata into Pinecone for production-level RAG."
+authors = ["Kevin Kibe <keviinkibe@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/KevKibe/docindex"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pinecone-client = "3.2.2"
+tiktoken = "0.6.0"
+pypdf = "4.1.0"
+unstructured = "0.12.6"
+langchain-community = "0.0.31"
+langchain = "0.1.14"
+langchain-openai = "0.1.1"
+langchain-google-genai = "1.0.1"
+langchain-pinecone = "0.1.0"
+google.generativeai = "0.4.1"
+python-dotenv = "^1.0.1"
+docx2txt = "^0.8"
+python-docx = "^1.1.0"
+markdown = "^3.6"
+langchain-cohere = "^0.1.4"
+
+[tool.poetry.dev-dependencies]
+
+[[tool.poetry.source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+
 [build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
