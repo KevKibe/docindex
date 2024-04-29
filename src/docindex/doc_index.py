@@ -136,19 +136,17 @@ class PineconeIndexer:
         # Google Generative AI
         if self.google_api_key:
             genai.configure(api_key=self.google_api_key)
-            embed = genai.embed_content(
+            return genai.embed_content(
                 model='models/embedding-001',
                 content=sample_text,
                 task_type="retrieval_document"
             )
-            return embed
 
         # OpenAI Embeddings
         elif self.openai_api_key:
-            embed = OpenAIEmbeddings(
+            return OpenAIEmbeddings(
                 openai_api_key=self.openai_api_key
             )
-            return embed
         # elif self.cohere_api_key:
         #     embed = CohereEmbeddings(model_name = "embed-english-light-v3.0",
         #                             cohere_api_key=self.cohere_api_key)
