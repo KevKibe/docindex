@@ -188,24 +188,37 @@ class PineconeIndexer:
             } for j, text in enumerate(record_texts)]
             texts.extend(record_texts)
             metadatas.extend(record_metadatas)
-            if len(texts) >= batch_limit:
-                ids = [str(uuid4()) for _ in range(len(texts))]
-                embeddings = None
-                if self.google_api_key:
-                    embeds = self.embed(texts) 
-                    embeddings =  embeds['embedding']
-                elif self.openai_api_key:
-                    embed = self.embed()  
-                    embeddings = embed.embed_documents(texts)
-                # elif self.cohere_api_key:
-                #     embed = self.embed()  
-                #     embeddings = embed.embed_query(texts)
-
-                if embeddings is not None:
+            if self.openai_api_key:
+                embed = self.embed() 
+                if len(texts) >= batch_limit:
+                    ids = [str(uuid4()) for _ in range(len(texts))]
+                    embeds = embed.embed_documents(texts)
                     index = self.pc.Index(self.index_name)  
-                    index.upsert(vectors=zip(ids, embeddings , metadatas), async_req=True)
+                    index.upsert(vectors=zip(ids, embeds, metadatas), async_req=True)
                     texts = []
                     metadatas = []
+
+            if self.google_api_key:
+                embeds = self.embed(texts) 
+                if len(texts) >= batch_limit:
+                    ids = [str(uuid4()) for _ in range(len(texts))]
+                    embeds = self.embed(texts)
+                    embeds = embeds['embedding']
+                    index = self.pc.Index(self.index_name)  
+                    index.upsert(vectors=zip(ids, embeds, metadatas), async_req=True)
+                    texts = []
+                    metadatas = []
+
+                # embeddings = None
+                # if self.google_api_key:
+                #     embeds = self.embed(texts) 
+                #     embeddings =  embeds['embedding']
+                # elif self.openai_api_key:
+                #     embed = self.embed()  
+                #     embeddings = embed.embed_documents(texts)
+                # # elif self.cohere_api_key:
+                # #     embed = self.embed()  
+                # #     embeddings = embed.embed_query(texts)
                 else:
                     print("No API key provided for embedding generation.")
 
