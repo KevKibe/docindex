@@ -42,9 +42,9 @@ class TestPineconeIndexer(unittest.TestCase):
         """
         urls = [
             "https://arxiv.org/pdf/1706.03762.pdf",
-            "tests/test.docx", 
-            "tests/TEST.md",
-            "tests/test.html"
+            "src/tests/test.docx", 
+            "src/tests/TEST.md",
+            "src/tests/test.html"
             ]
         self.indexer.index_documents(urls, batch_limit=10, chunk_size=256)
         index = self.indexer.pc.Index(self.index_name)
