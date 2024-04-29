@@ -17,6 +17,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from operator import itemgetter
 from langchain_openai import ChatOpenAI
+from src.config import Config
 
 
 
@@ -240,12 +241,17 @@ class OpenaiPineconeIndexer:
         return vectorstore
     
 
-    def retrieve_and_generate(self, prompt: str ,query: str, top_k: int , index_name: str):
+    def retrieve_and_generate(self,query: str, index_name: str, model_name: str = 'gpt-3.5-turbo-1106', top_k: int =5):
         """
         Retrieve documents from the Pinecone index and generate a response.
+        Args:
+            query: The query from the user
+            index_name: The name of the Pinecone index
+            model_name: The name of the model to use : defaults to 'gpt-3.5-turbo-1106'
+            top_k: The number of documents to retrieve from the index : defaults to 5
         """
-        llm = ChatOpenAI(temperature = 0, model = "gpt-3.5-turbo", openai_api_key = self.openai_api_key)
-        rag_prompt = PromptTemplate(template = prompt, input_variables = ["query", "context"])
+        llm = ChatOpenAI(model = Config.default_openai_model, openai_api_key = self.openai_api_key)
+        rag_prompt = PromptTemplate(template = Config.template_str, input_variables = ["query", "context"])
 
         vector_store = self.initialize_vectorstore(index_name)
         retriever = vector_store.as_retriver(search_kwargs = {"k": top_k})

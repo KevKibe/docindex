@@ -18,6 +18,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from operator import itemgetter
 from langchain_google_genai import ChatGoogleGenerativeAI
+from src.config import Config
 
 
 class GooglePineconeIndexer:
@@ -242,12 +243,17 @@ class GooglePineconeIndexer:
         return vectorstore
 
 
-    def retrieve_and_generate(self, prompt: str ,query: str, top_k: int , index_name: str):
+    def retrieve_and_generate(self,query: str, index_name: str, model_name: str = 'gemini-pro', top_k: int =5):
         """
         Retrieve documents from the Pinecone index and generate a response.
+        Args:
+            query: The qury from the user
+            index_name: The name of the Pinecone index
+            model_name: The name of the model to use : defaults to 'gemini-pro'
+            top_k: The number of documents to retrieve from the index : defaults to 5
         """
-        llm = ChatGoogleGenerativeAI(model = self.model_name, google_api_key=self.google_api_key)
-        rag_prompt = PromptTemplate(template = prompt, input_variables = ["query", "context"])
+        llm = ChatGoogleGenerativeAI(model = Config.default_google_model, google_api_key=self.google_api_key)
+        rag_prompt = PromptTemplate(template = Config.template_str, input_variables = ["query", "context"])
         vector_store = self.initialize_vectorstore(index_name)
         retriever = vector_store.as_retriver(search_kwargs = {"k": top_k})
         rag_chain = (
