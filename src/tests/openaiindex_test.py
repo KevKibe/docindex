@@ -1,5 +1,5 @@
 import unittest
-from _openai.docindex import OpenaiPineconeIndexer
+from _openai.doc_index import OpenaiPineconeIndexer
 import os 
 from io import StringIO
 from unittest.mock import patch
@@ -7,6 +7,8 @@ import pinecone
 from langchain_pinecone import PineconeVectorStore 
 from dotenv import load_dotenv
 load_dotenv()
+
+
 class TestOpenaiPineconeIndexer(unittest.TestCase):
     """
     Test case class for the OpenaiPineconeIndexer.
@@ -20,7 +22,8 @@ class TestOpenaiPineconeIndexer(unittest.TestCase):
         self.pinecone_api_key = os.environ.get('PINECONE_API_KEY')
         self.openai_api_key = os.environ.get('OPENAI_API_KEY')
         self.indexer = OpenaiPineconeIndexer(self.index_name, self.pinecone_api_key, self.openai_api_key)
-
+        return super().setUp()
+    
     @patch('sys.stdout', new_callable=StringIO)
     def test_01_create_index(self, mock_stdout):
         """
@@ -56,8 +59,18 @@ class TestOpenaiPineconeIndexer(unittest.TestCase):
         vectorstore = self.indexer.initialize_vectorstore(self.index_name)
         self.assertIsInstance(vectorstore, PineconeVectorStore)
 
+    def test_04_retrieve_and_generate(self):
+        """
+        Test initializing the vector store and assert its type.
+        """
+        response = self.indexer.retrieve_and_generate(query = "give a short summary of the introduction",
+                                                      index_name= self.index_name
+                                                      )
+        print(response)
+        self.assertIsNotNone(response, "The retriever response should not be None.")
+
     @patch('sys.stdout', new_callable=StringIO)
-    def test_04_delete_index(self, mock_stdout):
+    def test_05_delete_index(self, mock_stdout):
         """
         Test deleting an index and assert the output.
         """
