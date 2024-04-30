@@ -13,12 +13,11 @@ from langchain_community.document_loaders import UnstructuredMarkdownLoader
 from langchain_community.document_loaders import UnstructuredHTMLLoader
 from langchain_pinecone import PineconeVectorStore
 from langchain_core.prompts import PromptTemplate
-from langchain_core.output_parsers import StrOutputParser
 from operator import itemgetter
 from langchain_openai import ChatOpenAI
-from _openai.config import Config
-
-
+from utils.config import Config
+from utils.response_model import QueryResult
+from langchain.output_parsers import PydanticOutputParser
 
 class OpenaiPineconeIndexer:
     """
@@ -99,30 +98,23 @@ class OpenaiPineconeIndexer:
         pages = []
         file_path = Path(file_url)
 
-        # Determine file type and use the appropriate loader
         file_extension = file_path.suffix
 
-        # Load and split PDF files
         if file_extension == ".pdf":
             loader = PyPDFLoader(file_url)
             pages = loader.load_and_split()
 
-        # Load and split DOCX and DOC files
         elif file_extension in ('.docx', '.doc'):
             loader = UnstructuredWordDocumentLoader(file_url)
             pages = loader.load_and_split()
 
-        # Load and split Markdown files
         elif file_extension == '.md':
             loader = UnstructuredMarkdownLoader(file_url)
             pages = loader.load_and_split()
 
-        # Load and split HTML files
         elif file_extension == '.html':
             loader = UnstructuredHTMLLoader(file_url)
             pages = loader.load_and_split()
-
-        # Return the list of pages
         return pages
     
     
@@ -240,7 +232,7 @@ class OpenaiPineconeIndexer:
         return vectorstore
     
 
-    def retrieve_and_generate(self,query: str, index_name: str, model_name: str = 'gpt-3.5-turbo-1106', top_k: int =5):
+    def retrieve_and_generate(self,query: str, vector_store: str, model_name: str = 'gpt-3.5-turbo-1106', top_k: int =5):
         """
         Retrieve documents from the Pinecone index and generate a response.
         Args:
@@ -250,20 +242,23 @@ class OpenaiPineconeIndexer:
             top_k: The number of documents to retrieve from the index : defaults to 5
         """
         llm = ChatOpenAI(model = Config.default_openai_model, openai_api_key = self.openai_api_key)
-        rag_prompt = PromptTemplate(template = Config.template_str, input_variables = ["query", "context"])
-
-        vector_store = self.initialize_vectorstore(index_name)
+        parser = PydanticOutputParser(pydantic_object=QueryResult)
+        rag_prompt = PromptTemplate(template = Config.template_str, 
+                                    input_variables = ["query", "context"],
+                                    partial_variables={"format_instructions": parser.get_format_instructions()})
         retriever = vector_store.as_retriever(search_kwargs = {"k": top_k})
+        
         rag_chain = (
             {"context": itemgetter("query")| retriever,
-             "query": itemgetter("query"),
-             }
-             | rag_prompt
-             | llm
-             | StrOutputParser()
+            "query": itemgetter("query"),
+            }
+            | rag_prompt
+            | llm
+            | parser
         )
 
         return rag_chain.invoke({"query": query})
+
 
 
 

@@ -16,7 +16,9 @@ from langchain_community.llms import Cohere
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from operator import itemgetter
-from _cohere.config import Config
+from utils.config import Config
+from utils.response_model import QueryResult
+from langchain.output_parsers import PydanticOutputParser
 
 class CoherePineconeIndexer:
     """
@@ -218,7 +220,7 @@ class CoherePineconeIndexer:
         vectorstore = PineconeVectorStore(index,embed, "text")
         return vectorstore
     
-    def retrieve_and_generate(self,query: str, index_name: str, model_name: str = 'gpt-3.5-turbo-1106', top_k: int =5):
+    def retrieve_and_generate(self,query: str, vector_store: str, model_name: str = 'gpt-3.5-turbo-1106', top_k: int =5):
         """
         Retrieve documents from the Pinecone index and generate a response.
         Args:
@@ -228,17 +230,19 @@ class CoherePineconeIndexer:
             top_k: The number of documents to retrieve from the index : defaults to 5
         """
         llm = Cohere(model="command", cohere_api_key = self.cohere_api_key)
-        rag_prompt = PromptTemplate(template = Config.template_str, input_variables = ["query", "context"])
-
-        vector_store = self.initialize_vectorstore(index_name)
+        parser = PydanticOutputParser(pydantic_object=QueryResult)
+        rag_prompt = PromptTemplate(template = Config.template_str, 
+                                    input_variables = ["query", "context"],
+                                    partial_variables={"format_instructions": parser.get_format_instructions()})
         retriever = vector_store.as_retriever(search_kwargs = {"k": top_k})
+        
         rag_chain = (
             {"context": itemgetter("query")| retriever,
-             "query": itemgetter("query"),
-             }
-             | rag_prompt
-             | llm
-             | StrOutputParser()
+            "query": itemgetter("query"),
+            }
+            | rag_prompt
+            | llm
+            | parser
         )
 
         return rag_chain.invoke({"query": query})
