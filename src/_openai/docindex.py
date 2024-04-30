@@ -7,11 +7,18 @@ from langchain_openai import OpenAIEmbeddings
 import tiktoken
 from typing import List
 from .doc_model import Page
-from langchain_pinecone import PineconeVectorStore 
 from pathlib import Path
 from langchain_community.document_loaders import UnstructuredWordDocumentLoader
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
 from langchain_community.document_loaders import UnstructuredHTMLLoader
+from langchain_pinecone import PineconeVectorStore
+from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from operator import itemgetter
+from langchain_openai import ChatOpenAI
+from src.config import Config
+
+
 
 class OpenaiPineconeIndexer:
     """
@@ -231,3 +238,35 @@ class OpenaiPineconeIndexer:
                 )
         vectorstore = PineconeVectorStore(index, embed, "text")
         return vectorstore
+    
+
+    def retrieve_and_generate(self,query: str, index_name: str, model_name: str = 'gpt-3.5-turbo-1106', top_k: int =5):
+        """
+        Retrieve documents from the Pinecone index and generate a response.
+        Args:
+            query: The query from the user
+            index_name: The name of the Pinecone index
+            model_name: The name of the model to use : defaults to 'gpt-3.5-turbo-1106'
+            top_k: The number of documents to retrieve from the index : defaults to 5
+        """
+        llm = ChatOpenAI(model = Config.default_openai_model, openai_api_key = self.openai_api_key)
+        rag_prompt = PromptTemplate(template = Config.template_str, input_variables = ["query", "context"])
+
+        vector_store = self.initialize_vectorstore(index_name)
+        retriever = vector_store.as_retriver(search_kwargs = {"k": top_k})
+        rag_chain = (
+            {"context": itemgetter("query")| retriever,
+             "query": itemgetter("query"),
+             }
+             | rag_prompt
+             | llm
+             | StrOutputParser()
+        )
+
+        return rag_chain.invoke({"query": query})
+
+
+
+
+
+
