@@ -7,7 +7,6 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import tiktoken
 from typing import List
 from _openai.doc_model import Page
-from langchain_pinecone import PineconeVectorStore 
 import google.generativeai as genai
 from pathlib import Path
 from langchain_community.document_loaders import UnstructuredWordDocumentLoader
