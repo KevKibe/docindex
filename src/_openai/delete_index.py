@@ -1,4 +1,4 @@
-from .docindex import OpenaiPineconeIndexer
+from .doc_index import OpenaiPineconeIndexer
 import argparse
 
 def parse_args():
