@@ -63,8 +63,9 @@ class TestGooglePineconeIndexer(unittest.TestCase):
         """
         Test initializing the vector store and assert its type.
         """
+        vectorstore = self.indexer.initialize_vectorstore(self.index_name)
         response = self.indexer.retrieve_and_generate(query = "give a short summary of the introduction",
-                                                      index_name= self.index_name
+                                                      vectorstore= vectorstore
                                                       )
         print(response)
         self.assertIsNotNone(response, "The retriever response should not be None.")

@@ -8,7 +8,6 @@ from langchain_pinecone import PineconeVectorStore
 from dotenv import load_dotenv
 load_dotenv()
 
-
 class TestOpenaiPineconeIndexer(unittest.TestCase):
     """
     Test case class for the OpenaiPineconeIndexer.
@@ -63,10 +62,10 @@ class TestOpenaiPineconeIndexer(unittest.TestCase):
         """
         Test initializing the vector store and assert its type.
         """
+        vectorstore = self.indexer.initialize_vectorstore(self.index_name)
         response = self.indexer.retrieve_and_generate(query = "give a short summary of the introduction",
-                                                      index_name= self.index_name
+                                                      vector_store = vectorstore
                                                       )
-        print(response)
         self.assertIsNotNone(response, "The retriever response should not be None.")
 
     @patch('sys.stdout', new_callable=StringIO)

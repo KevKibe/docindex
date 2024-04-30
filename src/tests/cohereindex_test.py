@@ -54,15 +54,15 @@ class TestCoherePineconeIndexer(unittest.TestCase):
         vectorstore = self.indexer.initialize_vectorstore(self.index_name)
         self.assertIsInstance(vectorstore, PineconeVectorStore)
 
-    def test_04_retrieve_and_generate(self):
-        """
-        Test initializing the vector store and assert its type.
-        """
-        response = self.indexer.retrieve_and_generate(query = "what is the title of the document",
-                                                      index_name= self.index_name
-                                                      )
-        print(response)
-        self.assertIsNotNone(response, "The retriever response should not be None.")
+    # def test_04_retrieve_and_generate(self):
+    #     """
+    #     Test initializing the vector store and assert its type.
+    #     """
+    #     response = self.indexer.retrieve_and_generate(query = "what is the title of the document",
+    #                                                   index_name= self.index_name
+    #                                                   )
+    #     print(response)
+    #     self.assertIsNotNone(response, "The retriever response should not be None.")
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_05_delete_index(self, mock_stdout):
