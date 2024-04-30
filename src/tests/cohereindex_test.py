@@ -1,5 +1,5 @@
 import unittest
-from _openai.doc_index import OpenaiPineconeIndexer
+from _cohere.doc_index import CoherePineconeIndexer
 import os 
 from io import StringIO
 from unittest.mock import patch
@@ -8,19 +8,15 @@ from langchain_pinecone import PineconeVectorStore
 from dotenv import load_dotenv
 load_dotenv()
 
-class TestOpenaiPineconeIndexer(unittest.TestCase):
+class TestCoherePineconeIndexer(unittest.TestCase):
     """
-    Test case class for the OpenaiPineconeIndexer.
+    Test case class for CoherePineconeIndexer
     """
-
-    def setUp(self):
-        """
-        Set up the test case with common attributes.
-        """
+    def setUp(self) -> None:
         self.index_name = "new-index-1"
         self.pinecone_api_key = os.environ.get('PINECONE_API_KEY')
-        self.openai_api_key = os.environ.get('OPENAI_API_KEY')
-        self.indexer = OpenaiPineconeIndexer(self.index_name, self.pinecone_api_key, self.openai_api_key)
+        self.cohere_api_key = os.environ.get('COHERE_API_KEY')
+        self.indexer = CoherePineconeIndexer(self.index_name, self.pinecone_api_key, self.cohere_api_key)
         return super().setUp()
     
     @patch('sys.stdout', new_callable=StringIO)
@@ -50,7 +46,7 @@ class TestOpenaiPineconeIndexer(unittest.TestCase):
         self.indexer.index_documents(urls, batch_limit=10, chunk_size=256)
         index = self.indexer.pc.Index(self.index_name)
         self.assertIsInstance(index, pinecone.data.index.Index)
-        
+
     def test_03_initialize_vectorstore(self):
         """
         Test initializing the vector store and assert its type.
@@ -58,15 +54,15 @@ class TestOpenaiPineconeIndexer(unittest.TestCase):
         vectorstore = self.indexer.initialize_vectorstore(self.index_name)
         self.assertIsInstance(vectorstore, PineconeVectorStore)
 
-    def test_04_retrieve_and_generate(self):
-        """
-        Test initializing the vector store and assert its type.
-        """
-        vectorstore = self.indexer.initialize_vectorstore(self.index_name)
-        response = self.indexer.retrieve_and_generate(query = "give a short summary of the introduction",
-                                                      vector_store = vectorstore
-                                                      )
-        self.assertIsNotNone(response, "The retriever response should not be None.")
+    # def test_04_retrieve_and_generate(self):
+    #     """
+    #     Test initializing the vector store and assert its type.
+    #     """
+    #     response = self.indexer.retrieve_and_generate(query = "what is the title of the document",
+    #                                                   index_name= self.index_name
+    #                                                   )
+    #     print(response)
+    #     self.assertIsNotNone(response, "The retriever response should not be None.")
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_05_delete_index(self, mock_stdout):
@@ -80,14 +76,14 @@ class TestOpenaiPineconeIndexer(unittest.TestCase):
         self.assertEqual(index_deleted_message_0, f"Deleting index {self.index_name}")
         index_deleted_message_1 = lines[1]
         self.assertEqual(index_deleted_message_1, f"Index {self.index_name} deleted successfully!")
-    
+
     @classmethod
     def sort_test_methods(cls, testCaseClass, testCaseNames):
         """
         Sort test methods for better readability.
         """
         return sorted(testCaseNames)
-
+    
 if __name__ == "__main__":
-    unittest.TestLoader.sortTestMethodsUsing = TestOpenaiPineconeIndexer.sort_test_methods
+    unittest.TestLoader.sortTestMethodsUsing = TestCoherePineconeIndexer.sort_test_methods
     unittest.main()

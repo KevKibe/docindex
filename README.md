@@ -1,4 +1,4 @@
-<h1 align="center">DocIndex: Fast Persistent Document Embeddings Storage for RAG</h1>
+<h1 align="center">DocIndex: Fast Persistent Document Embeddings Storage for Production-Level RAG</h1>
 <p align="center">
 
   <a href="https://github.com/KevKibe/docindex/commits/">
