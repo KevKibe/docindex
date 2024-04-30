@@ -7,7 +7,6 @@ from langchain_openai import OpenAIEmbeddings
 import tiktoken
 from typing import List
 from .doc_model import Page
-from langchain_pinecone import PineconeVectorStore 
 from pathlib import Path
 from langchain_community.document_loaders import UnstructuredWordDocumentLoader
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
