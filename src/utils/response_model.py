@@ -13,7 +13,28 @@ class QueryResult(BaseModel):
     page: Union[float, int] = Field(..., description="The page number of the final result of the query.")
     source_documents: List[Document] = Field(..., description="A list of source documents related to the query.")
 
-# Example usage:
+    @property
+    def sources(self) -> List[Union[float, int]]:
+        """
+        Returns a list of the sources (page numbers) from the source documents.
+        """
+        return [doc.source for doc in self.source_documents]
+
+    @property
+    def titles(self) -> List[str]:
+        """
+        Returns a list of the titles from the source documents.
+        """
+        return [doc.title for doc in self.source_documents]
+
+    @property
+    def page_contents(self) -> List[str]:
+        """
+        Returns a list of the page contents from the source documents.
+        """
+        return [doc.page_content for doc in self.source_documents]
+
+# Example 
 # data = {
 #     'query': 'how did RAG come up?',
 #     'result': 'RAG came up as a language model that is more strongly grounded in '
