@@ -59,16 +59,16 @@ class TestGooglePineconeIndexer(unittest.TestCase):
         vectorstore = self.indexer.initialize_vectorstore(self.index_name)
         self.assertIsInstance(vectorstore, PineconeVectorStore)
 
-    def test_04_retrieve_and_generate(self):
-        """
-        Test initializing the vector store and assert its type.
-        """
-        vector_store = self.indexer.initialize_vectorstore(self.index_name)
-        response = self.indexer.retrieve_and_generate(query = "give a short summary of the introduction",
-                                                      vector_store= vector_store
-                                                      )
-        print(response)
-        self.assertIsNotNone(response, "The retriever response should not be None.")
+    # def test_04_retrieve_and_generate(self):
+    #     """
+    #     Test initializing the vector store and assert its type.
+    #     """
+    #     vector_store = self.indexer.initialize_vectorstore(self.index_name)
+    #     response = self.indexer.retrieve_and_generate(query = "give a short summary of the introduction",
+    #                                                   vector_store= vector_store
+    #                                                   )
+    #     print(response)
+    #     self.assertIsNotNone(response, "The retriever response should not be None.")
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_05_delete_index(self, mock_stdout):

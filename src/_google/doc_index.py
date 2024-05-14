@@ -6,7 +6,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import tiktoken
 from typing import List
-from _openai.doc_model import Page
+from utils.doc_model import Page
 import google.generativeai as genai
 from pathlib import Path
 from langchain_community.document_loaders import UnstructuredWordDocumentLoader
@@ -27,8 +27,8 @@ class GooglePineconeIndexer:
     def __init__(
         self,
         index_name: str,
-        pinecone_api_key: str,
-        google_api_key: str
+        pinecone_api_key: str = None,
+        google_api_key: str = None
     ) -> None:
         """
         Initialize the GoogleGenerativeAIEmbeddings object.

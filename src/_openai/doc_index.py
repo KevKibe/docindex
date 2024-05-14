@@ -6,7 +6,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 import tiktoken
 from typing import List
-from .doc_model import Page
+from utils.doc_model import Page
 from pathlib import Path
 from langchain_community.document_loaders import UnstructuredWordDocumentLoader
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
@@ -26,8 +26,8 @@ class OpenaiPineconeIndexer:
     def __init__(
         self,
         index_name: str,
-        pinecone_api_key: str,
-        openai_api_key: str
+        pinecone_api_key: str = None ,
+        openai_api_key: str = None
     ) -> None:
         """
         Initialize the OpenAIPineconeIndexer object.
