@@ -68,7 +68,7 @@ class TestGooglePineconeIndexer(unittest.TestCase):
             query = "give a short summary of the introduction",
             vector_store = vector_store,
             top_k = 3,
-            reranker_model = "t5"
+            rerank_model = "t5"
             )
         print(response)
         self.assertIsNotNone(response, "The retriever response should not be None.")
