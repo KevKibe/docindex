@@ -1,4 +1,4 @@
-name: CoherePineconeIndexer Tests
+name: Tests
 
 on: [pull_request]
 
