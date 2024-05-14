@@ -224,7 +224,19 @@ class OpenaiPineconeIndexer:
         print("Indexing complete.")
         return index
         
-    def initialize_vectorstore(self, index_name):
+    def initialize_vectorstore(self, index_name: str) -> PineconeVectorStore:
+        """
+        Initialize a vector store with the given index name.
+
+        Args:
+            index_name (str): The name of the Pinecone index.
+
+        Returns:
+            PineconeVectorStore: Initialized vector store.
+
+        Raises:
+            ValueError: If the index_name is empty or None.
+        """
         index = self.pc.Index(index_name)
         embed = OpenAIEmbeddings(
                 model = 'text-embedding-ada-002',
@@ -235,12 +247,13 @@ class OpenaiPineconeIndexer:
     
 
     def retrieve_and_generate(
-            self,
-            query: str, 
-            vector_store: str, 
-            top_k: int =5, 
-            reranker_model: str = None, 
-            reranker_model_api_key: str = None):
+        self,
+        query: str, 
+        vector_store: str, 
+        top_k: int =3, 
+        reranker_model: str = None, 
+        reranker_model_api_key: str = None
+    ) -> QueryResult:
         """
         Retrieve documents from the Pinecone index and generate a response.
         Args:
@@ -255,7 +268,7 @@ class OpenaiPineconeIndexer:
                                     input_variables = ["query", "context"],
                                     partial_variables={"format_instructions": parser.get_format_instructions()})
         retriever = vector_store.as_retriever()
-        ranker = Reranker(reranker_model)
+        ranker = Reranker(reranker_model, api_key = None)
         compressor = ranker.as_langchain_compressor(k=top_k)
         compression_retriever = ContextualCompressionRetriever(
             base_compressor=compressor, 

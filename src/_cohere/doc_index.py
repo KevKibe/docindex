@@ -18,6 +18,9 @@ from operator import itemgetter
 from utils.config import Config
 from utils.response_model import QueryResult
 from langchain.output_parsers import PydanticOutputParser
+from rerankers import Reranker
+from langchain.retrievers import ContextualCompressionRetriever
+
 
 class CoherePineconeIndexer:
     """
@@ -212,14 +215,33 @@ class CoherePineconeIndexer:
         print(index.describe_index_stats())
         print("Indexing complete.")
 
-    def initialize_vectorstore(self, index_name):
+    def initialize_vectorstore(self, index_name: str) -> PineconeVectorStore:
+        """
+        Initialize a vector store with the given index name.
+
+        Args:
+            index_name (str): The name of the Pinecone index.
+
+        Returns:
+            PineconeVectorStore: Initialized vector store.
+
+        Raises:
+            ValueError: If the index_name is empty or None.
+        """
         index = self.pc.Index(index_name)
         embed = CohereEmbeddings(model="embed-multilingual-v2.0",
                                 cohere_api_key = self.cohere_api_key)
         vectorstore = PineconeVectorStore(index,embed, "text")
         return vectorstore
     
-    def retrieve_and_generate(self,query: str, vector_store: str, model_name: str = 'gpt-3.5-turbo-1106', top_k: int =5):
+    def retrieve_and_generate(
+        self,
+        query: str, 
+        vector_store: str, 
+        top_k: int =3, 
+        reranker_model: str = None, 
+        reranker_model_api_key: str = None
+    ) -> QueryResult:
         """
         Retrieve documents from the Pinecone index and generate a response.
         Args:
@@ -233,10 +255,16 @@ class CoherePineconeIndexer:
         rag_prompt = PromptTemplate(template = Config.template_str, 
                                     input_variables = ["query", "context"],
                                     partial_variables={"format_instructions": parser.get_format_instructions()})
-        retriever = vector_store.as_retriever(search_kwargs = {"k": top_k})
+        retriever = vector_store.as_retriever()
+        ranker = Reranker(reranker_model, api_key = None)
+        compressor = ranker.as_langchain_compressor(k=top_k)
+        compression_retriever = ContextualCompressionRetriever(
+            base_compressor=compressor, 
+            base_retriever=retriever
+        )
         
         rag_chain = (
-            {"context": itemgetter("query")| retriever,
+            {"context": itemgetter("query")| compression_retriever,
             "query": itemgetter("query"),
             }
             | rag_prompt
