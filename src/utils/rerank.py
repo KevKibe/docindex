@@ -37,4 +37,4 @@ class RerankerConfig:
         elif model_type == 'colbert':
             return Reranker(rerank_model, model_type='colbert')
         else:
-            return Reranker(model_name_or_path, model_type=model_type, api_key=api_key, api_provider=api_provider)
+            return Reranker(rerank_model, model_type=model_type, api_key=api_key, api_provider=api_provider)
