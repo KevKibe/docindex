@@ -140,7 +140,7 @@ cd src
 
 ```bash
 # Using OpenAI 
-python -m  _openai.create_index --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" -
+python -m  utils.create_index --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" 
 
 ```
 
@@ -164,7 +164,7 @@ python -m _cohere.index_documents   --pinecone_api_key "your_pinecone_api_key" -
 
 ```bash
 # Using OpenAI 
-python -m  _openai.delete_index --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" 
+python -m  utils.delete_index --pinecone_api_key "your_pinecone_api_key" --index_name "your_index_name" 
 
 ```
 
