@@ -2,7 +2,7 @@ from _openai.doc_index import OpenaiPineconeIndexer
 import argparse
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Index documents on Pinecone using OpenAI embeddings.")
+    parser = argparse.ArgumentParser(description="Create an Index on Pinecone.")
     parser.add_argument("--pinecone_api_key", type=str, help="Pinecone API key")
     parser.add_argument("--index_name", type=str, help="Name of the Pinecone index")
     return parser.parse_args()
