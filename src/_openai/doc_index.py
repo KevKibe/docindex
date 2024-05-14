@@ -18,6 +18,7 @@ from langchain_openai import ChatOpenAI
 from utils.config import Config
 from utils.response_model import QueryResult
 from langchain.output_parsers import PydanticOutputParser
+from rerankers import Reranker
 
 class OpenaiPineconeIndexer:
     """
@@ -232,7 +233,13 @@ class OpenaiPineconeIndexer:
         return vectorstore
     
 
-    def retrieve_and_generate(self,query: str, vector_store: str, model_name: str = 'gpt-3.5-turbo-1106', top_k: int =5):
+    def retrieve_and_generate(
+            self,
+            query: str, 
+            vector_store: str, 
+            top_k: int =5, 
+            reranker_model: str = None, 
+            reranker_model_api_key: str = None):
         """
         Retrieve documents from the Pinecone index and generate a response.
         Args:
@@ -246,10 +253,11 @@ class OpenaiPineconeIndexer:
         rag_prompt = PromptTemplate(template = Config.template_str, 
                                     input_variables = ["query", "context"],
                                     partial_variables={"format_instructions": parser.get_format_instructions()})
-        retriever = vector_store.as_retriever(search_kwargs = {"k": top_k})
-        
+        # retriever = vector_store.as_retriever(search_kwargs = {"k": top_k})
+        results = Reranker(reranker_model)
+        results = results.top_k(top_k)
         rag_chain = (
-            {"context": itemgetter("query")| retriever,
+            {"context": itemgetter("query")| results,
             "query": itemgetter("query"),
             }
             | rag_prompt
