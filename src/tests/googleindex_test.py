@@ -65,7 +65,7 @@ class TestGooglePineconeIndexer(unittest.TestCase):
         """
         vector_store = self.indexer.initialize_vectorstore(self.index_name)
         response = self.indexer.retrieve_and_generate(
-            query = "give a short summary of the introduction",
+            query = "tell me something from the context texts",
             vector_store = vector_store,
             top_k = 3,
             rerank_model = "t5"
