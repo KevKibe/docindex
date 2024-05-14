@@ -27,8 +27,8 @@ class GooglePineconeIndexer:
     def __init__(
         self,
         index_name: str,
-        pinecone_api_key: str,
-        google_api_key: str
+        pinecone_api_key: str = None,
+        google_api_key: str = None
     ) -> None:
         """
         Initialize the GoogleGenerativeAIEmbeddings object.

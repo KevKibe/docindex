@@ -26,8 +26,8 @@ class OpenaiPineconeIndexer:
     def __init__(
         self,
         index_name: str,
-        pinecone_api_key: str,
-        openai_api_key: str
+        pinecone_api_key: str = None ,
+        openai_api_key: str = None
     ) -> None:
         """
         Initialize the OpenAIPineconeIndexer object.
