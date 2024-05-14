@@ -19,6 +19,7 @@ from utils.config import Config
 from utils.response_model import QueryResult
 from langchain.output_parsers import PydanticOutputParser
 from rerankers import Reranker
+from langchain.retrievers import ContextualCompressionRetriever
 
 class OpenaiPineconeIndexer:
     """
@@ -253,11 +254,16 @@ class OpenaiPineconeIndexer:
         rag_prompt = PromptTemplate(template = Config.template_str, 
                                     input_variables = ["query", "context"],
                                     partial_variables={"format_instructions": parser.get_format_instructions()})
-        # retriever = vector_store.as_retriever(search_kwargs = {"k": top_k})
-        results = Reranker(reranker_model)
-        results = results.top_k(top_k)
+        retriever = vector_store.as_retriever()
+        ranker = Reranker(reranker_model)
+        compressor = ranker.as_langchain_compressor(k=top_k)
+        compression_retriever = ContextualCompressionRetriever(
+            base_compressor=compressor, 
+            base_retriever=retriever
+        )
+
         rag_chain = (
-            {"context": itemgetter("query")| results,
+            {"context": itemgetter("query")| compression_retriever,
             "query": itemgetter("query"),
             }
             | rag_prompt
