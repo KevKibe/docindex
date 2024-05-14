@@ -6,7 +6,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import tiktoken
 from typing import List
-from _openai.doc_model import Page
+from utils.doc_model import Page
 import google.generativeai as genai
 from pathlib import Path
 from langchain_community.document_loaders import UnstructuredWordDocumentLoader

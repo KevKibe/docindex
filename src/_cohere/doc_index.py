@@ -5,7 +5,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import tiktoken
 from typing import List
-from _openai.doc_model import Page
+from utils.doc_model import Page
 from langchain_pinecone import PineconeVectorStore 
 from pathlib import Path
 from langchain_community.document_loaders import UnstructuredWordDocumentLoader
