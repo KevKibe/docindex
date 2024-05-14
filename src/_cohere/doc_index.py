@@ -239,7 +239,7 @@ class CoherePineconeIndexer:
         query: str, 
         vector_store: str, 
         top_k: int =3, 
-        model_name_or_path: str = 'flashrank', 
+        rerank_model: str = 'flashrank', 
         model_type: Optional[str] = None,
         lang: Optional[str] = None,
         api_key: Optional[str] = None,
@@ -252,7 +252,7 @@ class CoherePineconeIndexer:
             query (str): The query from the user.
             vector_store (str): The name of the Pinecone index.
             top_k (int, optional): The number of documents to retrieve from the index (default is 3).
-            model_name_or_path (str, optional): The name or path of the model to use for ranking (default is 'flashrank').
+            rerank_model (str, optional): The name or path of the model to use for ranking (default is 'flashrank').
             model_type (str, optional): The type of the model (e.g., 'cross-encoder', 'flashrank', 't5', etc.).
             lang (str, optional): The language for multilingual models.
             api_key (str, optional): The API key for models accessed through an API.
@@ -271,7 +271,7 @@ class CoherePineconeIndexer:
                                     partial_variables={"format_instructions": parser.get_format_instructions()})
         retriever = vector_store.as_retriever()
         ranker = RerankerConfig.get_ranker(
-            model_name_or_path, 
+            rerank_model, 
             model_type, 
             lang, 
             api_key, 
