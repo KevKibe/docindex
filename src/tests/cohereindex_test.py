@@ -1,5 +1,5 @@
 import unittest
-from _cohere.doc_index import CoherePineconeIndexer
+from docindex_cohere.doc_index import CoherePineconeIndexer
 import os 
 from io import StringIO
 from unittest.mock import patch
