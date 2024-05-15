@@ -10,5 +10,5 @@ class Config:
     """
 
     default_google_model = "gemini-pro"
-    default_openai_model = "gpt-3.5-turbo-1106"
+    default_openai_model = "gpt-3.5-turbo-0125"
     default_cohere_model = "command"
