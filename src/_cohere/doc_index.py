@@ -12,7 +12,6 @@ from langchain_community.document_loaders import UnstructuredWordDocumentLoader
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
 from langchain_community.document_loaders import UnstructuredHTMLLoader
 from langchain_cohere import CohereEmbeddings
-# from langchain_community.llms import Cohere
 from langchain_cohere import ChatCohere
 from langchain_core.prompts import PromptTemplate
 from operator import itemgetter
