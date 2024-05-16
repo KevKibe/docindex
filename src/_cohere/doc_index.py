@@ -12,7 +12,8 @@ from langchain_community.document_loaders import UnstructuredWordDocumentLoader
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
 from langchain_community.document_loaders import UnstructuredHTMLLoader
 from langchain_cohere import CohereEmbeddings
-from langchain_community.llms import Cohere
+# from langchain_community.llms import Cohere
+from langchain_cohere import ChatCohere
 from langchain_core.prompts import PromptTemplate
 from operator import itemgetter
 from utils.config import Config
@@ -264,7 +265,7 @@ class CoherePineconeIndexer:
         Raises:
             ValueError: If an unsupported model_type is provided.
         """
-        llm = Cohere(model="command", cohere_api_key = self.cohere_api_key)
+        llm = ChatCohere(model="command", cohere_api_key = self.cohere_api_key)
         parser = PydanticOutputParser(pydantic_object=QueryResult)
         rag_prompt = PromptTemplate(template = Config.template_str, 
                                     input_variables = ["query", "context"],
