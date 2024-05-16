@@ -83,7 +83,12 @@ vectorstore = pinecone_indexer.initialize_vectorstore(index_name)
 ### Query and Retrieve Information
 ```python
 query = "what is the transformers architecture"
-response = pinecone_indexer.retrieve_and_generate(vector_store = vectorstore, query = query)
+response = pinecone_indexer.retrieve_and_generate(
+                    vector_store = vectorstore, 
+                    query = query, 
+                    top_k = "number of sources to retrieve",    # Default is 3
+                    rerank_model = "reranking model"            # Default is 'flashrank'  Other models available Docs:https://github.com/AnswerDotAI/rerankers
+                    )
 response
 ```
 
