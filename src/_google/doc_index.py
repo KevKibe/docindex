@@ -5,7 +5,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import tiktoken
-from typing import List
+from typing import List, Optional
 from utils.doc_model import Page
 import google.generativeai as genai
 from pathlib import Path
@@ -19,6 +19,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from utils.config import Config
 from utils.response_model import QueryResult
 from langchain.output_parsers import PydanticOutputParser
+from utils.rerank import RerankerConfig
+from langchain.retrievers import ContextualCompressionRetriever
 
 class GooglePineconeIndexer:
     """
@@ -223,7 +225,19 @@ class GooglePineconeIndexer:
         print(index.describe_index_stats())
         print("Indexing complete.")
 
-    def initialize_vectorstore(self, index_name):
+    def initialize_vectorstore(self, index_name: str) -> PineconeVectorStore:
+        """
+        Initialize a vector store with the given index name.
+
+        Args:
+            index_name (str): The name of the Pinecone index.
+
+        Returns:
+            PineconeVectorStore: Initialized vector store.
+
+        Raises:
+            ValueError: If the index_name is empty or None.
+        """
         index = self.pc.Index(index_name)
         embed = GoogleGenerativeAIEmbeddings(
                 model="models/embedding-001", 
@@ -233,24 +247,57 @@ class GooglePineconeIndexer:
         return vectorstore
 
 
-    def retrieve_and_generate(self,query: str, vector_store: str, model_name: str = 'gemini-pro', top_k: int =5):
+    def retrieve_and_generate(
+        self,
+        query: str, 
+        vector_store: str, 
+        top_k: int =3, 
+        rerank_model: str = 'flashrank', 
+        model_type: Optional[str] = None,
+        lang: Optional[str] = None,
+        api_key: Optional[str] = None,
+        api_provider: Optional[str] = None,
+    ) -> QueryResult:
         """
         Retrieve documents from the Pinecone index and generate a response.
+
         Args:
-            query: The qury from the user
-            index_name: The name of the Pinecone index
-            model_name: The name of the model to use : defaults to 'gemini-pro'
-            top_k: The number of documents to retrieve from the index : defaults to 5
+            query (str): The query from the user.
+            vector_store (str): The name of the Pinecone index.
+            top_k (int, optional): The number of documents to retrieve from the index (default is 3).
+            rerank_model (str, optional): The name or path of the model to use for ranking (default is 'flashrank').
+            model_type (str, optional): The type of the model (e.g., 'cross-encoder', 'flashrank', 't5', etc.).
+            lang (str, optional): The language for multilingual models.
+            api_key (str, optional): The API key for models accessed through an API.
+            api_provider (str, optional): The provider of the API.
+
+        Returns:
+            QueryResult: A Pydantic model representing the generated response.
+
+        Raises:
+            ValueError: If an unsupported model_type is provided.
         """
         llm = ChatGoogleGenerativeAI(model = Config.default_google_model, google_api_key=self.google_api_key)
         parser = PydanticOutputParser(pydantic_object=QueryResult)
         rag_prompt = PromptTemplate(template = Config.template_str, 
                                     input_variables = ["query", "context"],
                                     partial_variables={"format_instructions": parser.get_format_instructions()})
-        retriever = vector_store.as_retriever(search_kwargs = {"k": top_k})
+        retriever = vector_store.as_retriever()
+        ranker = RerankerConfig.get_ranker(
+            rerank_model, 
+            model_type, 
+            lang, 
+            api_key, 
+            api_provider
+        )
+        compressor = ranker.as_langchain_compressor(k=top_k)
+        compression_retriever = ContextualCompressionRetriever(
+            base_compressor=compressor, 
+            base_retriever=retriever
+        )
         
         rag_chain = (
-            {"context": itemgetter("query")| retriever,
+            {"context": itemgetter("query")| compression_retriever,
             "query": itemgetter("query"),
             }
             | rag_prompt

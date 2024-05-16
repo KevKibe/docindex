@@ -63,9 +63,12 @@ class TestOpenaiPineconeIndexer(unittest.TestCase):
         Test initializing the vector store and assert its type.
         """
         vectorstore = self.indexer.initialize_vectorstore(self.index_name)
-        response = self.indexer.retrieve_and_generate(query = "give a short summary of the introduction",
-                                                      vector_store = vectorstore
-                                                      )
+        response = self.indexer.retrieve_and_generate(
+            query = "give a short summary of the introduction",
+            vector_store = vectorstore,
+            top_k = 3,
+            rerank_model = "t5"
+            )
         self.assertIsNotNone(response, "The retriever response should not be None.")
 
     @patch('sys.stdout', new_callable=StringIO)

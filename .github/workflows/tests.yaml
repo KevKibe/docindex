@@ -1,4 +1,4 @@
-name: CoherePineconeIndexer Tests
+name: Tests
 
 on: [pull_request]
 
@@ -20,30 +20,14 @@ jobs:
           pip install -r requirements.txt --no-cache-dir
           pip install pytest einops lion-pytorch
 
-      - name: Test CoherePineconeIndexer
-        id: cohere_test
-        env:
-            PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
-            COHERE_API_KEY: ${{ secrets.COHERE_API_KEY }}
-        run: |
-          pytest src/tests/cohereindex_test.py
-
-
-      - name: Test OpenaiPineconeIndexer
-        id: openai_test
-        env:
-            PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
-            OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          pytest src/tests/openaiindex_test.py
-
-
-      - name: Test GooglePineconeIndexer
-        id: google_test
+      - name: Test with pytest
         env:
             PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
             GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+            OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+            COHERE_API_KEY: ${{ secrets.COHERE_API_KEY }}
         run: |
-          pytest src/tests/googleindex_test.py
-      
+          pytest src/tests/openaiindex_test.py 
+          pytest src/tests/googleindex_test.py 
+          pytest src/tests/cohereindex_test.py
         
