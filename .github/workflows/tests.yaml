@@ -32,7 +32,7 @@ jobs:
           pytest src/tests/googleindex_test.py 
           pytest src/tests/cohereindex_test.py
 
-  dependabot-test:
+  dependabot-test-run:
       runs-on: ubuntu-latest
       if: ${{ github.actor == 'dependabot[bot]' }}
       steps:
@@ -59,4 +59,3 @@ jobs:
             pytest src/tests/openaiindex_test.py 
             pytest src/tests/googleindex_test.py 
             pytest src/tests/cohereindex_test.py
-            
