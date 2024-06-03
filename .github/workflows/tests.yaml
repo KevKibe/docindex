@@ -2,6 +2,10 @@ name: Tests
 
 on: [pull_request]
 
+permissions:
+  id-token: write
+
+
 jobs:
   test:
       runs-on: ubuntu-latest
