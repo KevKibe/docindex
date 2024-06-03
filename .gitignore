@@ -1,3 +1,7 @@
 src/_openai/__pycache__
 venv
 src/_openai/main.py
+src/tests/__pycache__
+src/_cohere/__pycache__
+src/_google/__pycache__
+.DS_STORE
