@@ -255,8 +255,7 @@ class GooglePineconeIndexer:
         rerank_model: str = 'flashrank', 
         model_type: Optional[str] = None,
         lang: Optional[str] = None,
-        api_key: Optional[str] = None,
-        api_provider: Optional[str] = None,
+        api_key: Optional[str] = None
     ) -> QueryResult:
         """
         Retrieve documents from the Pinecone index and generate a response.
@@ -269,7 +268,6 @@ class GooglePineconeIndexer:
             model_type (str, optional): The type of the model (e.g., 'cross-encoder', 'flashrank', 't5', etc.).
             lang (str, optional): The language for multilingual models.
             api_key (str, optional): The API key for models accessed through an API.
-            api_provider (str, optional): The provider of the API.
 
         Returns:
             QueryResult: A Pydantic model representing the generated response.
@@ -287,8 +285,7 @@ class GooglePineconeIndexer:
             rerank_model, 
             model_type, 
             lang, 
-            api_key, 
-            api_provider
+            api_key
         )
         compressor = ranker.as_langchain_compressor(k=top_k)
         compression_retriever = ContextualCompressionRetriever(
