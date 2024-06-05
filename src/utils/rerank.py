@@ -4,12 +4,12 @@ class RerankerConfig:
     SUPPORTED_MODELS = {
         'cohere': {'lang': True, 'api_key': True},
         'jina': {'api_key': True},
-        'cross-encoder': {'api_key': False},
-        'flashrank': {'api_key': False},
-        't5': {'api_key': False},
+        'cross-encoder': {},
+        'flashrank': {},
+        't5': {},
         'rankgpt': {'api_key': True},
         'rankgpt3': {'api_key': True},
-        'colbert': {'api_key': False},
+        'colbert': {},
         'mixedbread-ai/mxbai-rerank-large-v1': {'model_type': True},
         'ce-esci-MiniLM-L12-v2': {'model_type': True},
         'unicamp-dl/InRanker-base': {'model_type': True},
@@ -35,6 +35,11 @@ class RerankerConfig:
             raise ValueError(f"Unsupported rerank_model provided: {rerank_model}")
 
         model_config = RerankerConfig.SUPPORTED_MODELS[rerank_model]
-        return Reranker(rerank_model, lang=lang if model_config.get('lang') else None,
-                        api_key=api_key if model_config.get('api_key') else None,
-                        model_type=model_type if model_config.get('model_type') else None)
+        init_kwargs = {
+            'lang': lang if model_config.get('lang') else None,
+            'api_key': api_key if model_config.get('api_key') else None,
+            'model_type': model_type if model_config.get('model_type') else None
+        }
+        init_kwargs = {k: v for k, v in init_kwargs.items() if v is not None}
+        return Reranker(rerank_model, **init_kwargs)
+

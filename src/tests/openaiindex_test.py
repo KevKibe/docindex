@@ -67,7 +67,8 @@ class TestOpenaiPineconeIndexer(unittest.TestCase):
             query = "give a short summary of the introduction",
             vector_store = vectorstore,
             top_k = 3,
-            rerank_model = "t5"
+            # lang= "en",
+            rerank_model = "flashrank"
             )
         self.assertIsNotNone(response, "The retriever response should not be None.")
 
