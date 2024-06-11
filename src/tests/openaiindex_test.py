@@ -68,8 +68,10 @@ class TestOpenaiPineconeIndexer(unittest.TestCase):
             vector_store = vectorstore,
             top_k = 3,
             # lang= "en",
-            rerank_model = "flashrank"
+            rerank_model = "flashrank",
+            pydantic_parser=False
             )
+        print(response)
         self.assertIsNotNone(response, "The retriever response should not be None.")
 
     @patch('sys.stdout', new_callable=StringIO)
