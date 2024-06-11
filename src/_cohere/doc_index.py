@@ -239,6 +239,7 @@ class CoherePineconeIndexer:
         query: str, 
         vector_store: str, 
         top_k: int =3, 
+        pydantic_parser: bool = True,
         rerank_model: str = 'flashrank', 
         model_type: Optional[str] = None,
         lang: Optional[str] = None,
@@ -251,6 +252,7 @@ class CoherePineconeIndexer:
             query (str): The query from the user.
             vector_store (str): The name of the Pinecone index.
             top_k (int, optional): The number of documents to retrieve from the index (default is 3).
+            pydantic_parser (bool, optional): Whether to use Pydantic parsing for the generated response (default is True).
             rerank_model (str, optional): The name or path of the model to use for ranking (default is 'flashrank').
             model_type (str, optional): The type of the model (e.g., 'cross-encoder', 'flashrank', 't5', etc.).
             lang (str, optional): The language for multilingual models.
@@ -280,13 +282,22 @@ class CoherePineconeIndexer:
             base_retriever=retriever
         )
         
-        rag_chain = (
-            {"context": itemgetter("query")| compression_retriever,
-            "query": itemgetter("query"),
-            }
-            | rag_prompt
-            | llm
-            | parser
-        )
+        if pydantic_parser:
+            rag_chain = (
+                {"context": itemgetter("query")| compression_retriever,
+                "query": itemgetter("query"),
+                }
+                | rag_prompt
+                | llm
+                | parser
+            )
+        else:
+            rag_chain = (
+                {"context": itemgetter("query")| compression_retriever,
+                "query": itemgetter("query"),
+                }
+                | rag_prompt
+                | llm
+            )
 
         return rag_chain.invoke({"query": query})
