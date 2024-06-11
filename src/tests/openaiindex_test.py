@@ -42,7 +42,7 @@ class TestOpenaiPineconeIndexer(unittest.TestCase):
         Test indexing documents and assert the type of the index.
         """
         urls = [
-            "https://arxiv.org/pdf/1706.03762.pdf"
+            "https://arxiv.org/pdf/1706.03762.pdf",
             "src/tests/DOCX_TestPage.docx", 
             "src/tests/TEST.md",
             "src/tests/test.html"
