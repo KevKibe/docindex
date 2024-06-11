@@ -87,6 +87,7 @@ response = pinecone_indexer.retrieve_and_generate(
                     vector_store = vectorstore, 
                     query = query, 
                     top_k = "number of sources to retrieve",    # Default is 3
+                    pydantic_parser=True                        # Whether to use Pydantic parsing for the generated response (default is True)
                     rerank_model = "reranking model"            # Default is 'flashrank'  Other models available Docs:https://github.com/AnswerDotAI/rerankers
                     )
 response
