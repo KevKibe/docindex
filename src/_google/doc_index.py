@@ -243,7 +243,7 @@ class GooglePineconeIndexer:
                 model="models/embedding-001", 
                 google_api_key=self.google_api_key
                 )
-        vectorstore = PineconeVectorStore(index, embed, "text")
+        vectorstore = PineconeVectorStore(index=index, index_name=index_name, embedding=embed)
         return vectorstore
 
 
@@ -252,6 +252,7 @@ class GooglePineconeIndexer:
         query: str, 
         vector_store: str, 
         top_k: int =3, 
+        pydantic_parser: bool = True,
         rerank_model: str = 'flashrank', 
         model_type: Optional[str] = None,
         lang: Optional[str] = None,
@@ -264,6 +265,7 @@ class GooglePineconeIndexer:
             query (str): The query from the user.
             vector_store (str): The name of the Pinecone index.
             top_k (int, optional): The number of documents to retrieve from the index (default is 3).
+            pydantic_parser (bool, optional): Whether to use Pydantic parsing for the generated response (default is True).
             rerank_model (str, optional): The name or path of the model to use for ranking (default is 'flashrank').
             model_type (str, optional): The type of the model (e.g., 'cross-encoder', 'flashrank', 't5', etc.).
             lang (str, optional): The language for multilingual models.
@@ -275,7 +277,7 @@ class GooglePineconeIndexer:
         Raises:
             ValueError: If an unsupported model_type is provided.
         """
-        llm = ChatGoogleGenerativeAI(model = Config.default_google_model, google_api_key=self.google_api_key)
+        llm = ChatGoogleGenerativeAI(model = Config.default_google_model, google_api_key=self.google_api_key, temperature=0.7, top_p=0.85, convert_system_message_to_human=True)
         parser = PydanticOutputParser(pydantic_object=QueryResult)
         rag_prompt = PromptTemplate(template = Config.template_str, 
                                     input_variables = ["query", "context"],
@@ -283,23 +285,30 @@ class GooglePineconeIndexer:
         retriever = vector_store.as_retriever()
         ranker = RerankerConfig.get_ranker(
             rerank_model, 
-            model_type, 
             lang, 
-            api_key
+            api_key,
+            model_type, 
         )
         compressor = ranker.as_langchain_compressor(k=top_k)
         compression_retriever = ContextualCompressionRetriever(
             base_compressor=compressor, 
             base_retriever=retriever
         )
-        
-        rag_chain = (
-            {"context": itemgetter("query")| compression_retriever,
-            "query": itemgetter("query"),
-            }
-            | rag_prompt
-            | llm
-            | parser
-        )
-
-        return rag_chain.invoke({"query": query})
+        if pydantic_parser:
+            rag_chain = (
+                {"context": itemgetter("query")| compression_retriever,
+                "query": itemgetter("query"),
+                }
+                | rag_prompt
+                | llm
+                | parser
+            )
+        else:
+            rag_chain = (
+                {"context": itemgetter("query")| compression_retriever,
+                "query": itemgetter("query"),
+                }
+                | rag_prompt
+                | llm
+            )
+        return rag_chain.invoke({"query": query}).content
