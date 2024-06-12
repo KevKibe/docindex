@@ -1,8 +1,6 @@
 name: Tests
 
-on: 
-  pull_request_target:
-    branches: [master]
+on: [pull_request]
 
 jobs:
   test:
@@ -32,31 +30,3 @@ jobs:
           pytest src/tests/openaiindex_test.py 
           pytest src/tests/googleindex_test.py 
           pytest src/tests/cohereindex_test.py
-
-  dependabot-test-run:
-      runs-on: ubuntu-latest
-      if: ${{ github.actor == 'dependabot[bot]' }}
-      steps:
-        - name: Checkout Repository
-          uses: actions/checkout@v4
-                
-        - name: Set up Python
-          uses: actions/setup-python@v5
-          with:
-            python-version: '3.11' 
-                  
-        - name: Install dependencies
-          run: |
-            pip install -r requirements.txt --no-cache-dir
-            pip install pytest einops lion-pytorch
-  
-        - name: Test with pytest
-          env:
-              PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
-              GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-              OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-              COHERE_API_KEY: ${{ secrets.COHERE_API_KEY }}
-          run: |
-            pytest src/tests/openaiindex_test.py 
-            pytest src/tests/googleindex_test.py 
-            pytest src/tests/cohereindex_test.py
