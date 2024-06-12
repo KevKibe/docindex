@@ -1,7 +1,6 @@
-src/_openai/__pycache__
 venv
+.env
 src/_openai/main.py
-src/tests/__pycache__
-src/_cohere/__pycache__
-src/_google/__pycache__
-.DS_STORE
+**/__pycache__
+**/.flashrank_cache
+.DS_Store
