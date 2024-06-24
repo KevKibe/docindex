@@ -4,7 +4,7 @@ pypdf==4.1.0
 unstructured==0.14.5
 langchain-community==0.0.31
 langchain==0.1.14
-langchain-openai==0.1.1
+langchain-openai==0.1.9
 langchain-google-genai==1.0.1
 langchain-pinecone==0.1.0
 google.generativeai==0.4.1
